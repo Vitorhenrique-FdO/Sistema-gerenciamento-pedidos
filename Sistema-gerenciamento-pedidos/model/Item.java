@@ -1,7 +1,5 @@
 
 package model;
-
-package model;
  
 
 public class Item {
