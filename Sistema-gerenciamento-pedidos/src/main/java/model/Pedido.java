@@ -1,16 +1,13 @@
 package model;
 
 
-import java.util.Date;
-import java.util.Calendar; 
-
 public class Pedido {
       //CLASSES 
         
     int cod_pedido;
     int id_cliente;
-    date dt_pedido; //como usar o date? 
-    date dt_entrega;
+    String dt_pedido; 
+    String dt_entrega;
     float vlr_total;
 
     //GETTERS E SETTERS
@@ -59,11 +56,11 @@ public class Pedido {
     
     //CONSTRUTORES 
     
-    public Pedido(int cod_pedido, int id_cliente, date dt_pedido, date dt_entrega, float vlr_total) {
+    public Pedido(int cod_pedido, int id_cliente, String dt_pedido, String dt_entrega, double vlr_total) {
         this.cod_pedido = cod_pedido;
         this.id_cliente = id_cliente;
-        this.dt_pedido = dt_pedido;
-        this.dt_entrega = dt_entrega;
+        this.dt_pedido  = (dt_pedido  != null) ? dt_pedido.trim()  : "";
+        this.dt_entrega = (dt_entrega != null) ? dt_entrega.trim() : "";
         this.vlr_total = vlr_total;
     }
     
@@ -80,7 +77,7 @@ public class Pedido {
         
         return new Pedido(codPedido, idCliente, dtPedido, dtEntrega, vlrTotal);
         
-    }
+        }
         
     }
             
@@ -103,20 +100,46 @@ public class Pedido {
     //Converter o objeto para linha no CSV 
     
     public String toCSV() {
-        return codPedido + ";" +
-               idCliente + ";" +
-               dtPedido + ";" +
-               (dtEntrega != null ? dtEntrega : "") + ";" +
-               String.format("%.2f", vlrTotal);
+        return cod_pedido + ";" +
+               id_cliente + ";" +
+               dt_pedido + ";" +
+               (dt_entrega != null ? dt_entrega : "") + ";" +
+               String.format("%.2f", vlr_total);
     }
 
     @Override
     public String toString() {
-        return "Pedido{cod=" + codPedido +
-               ", cliente=" + idCliente +
-               ", data=" + dtPedido +
-               ", entrega=" + dtEntrega +
-               ", total=" + vlrTotal + "}";
+        return "Pedido{cod=" + cod_pedido +
+               ", cliente=" + id_cliente +
+               ", data=" + dt_pedido +
+               ", entrega=" + dt_entrega +
+               ", total=" + vlr_total + "}";
+    }
+    
+    public static Pedido fromCSV(String linha) {
+        try {
+            // -1 para não ignorar campos vazios (dt_entrega pode ser vazia)
+            String[] partes = linha.split(";", -1);
+            int    codPedido  = Integer.parseInt(partes[0].trim());
+            int    idCliente  = Integer.parseInt(partes[1].trim());
+            String dtPedido   = partes[2].trim();
+            String dtEntrega  = (partes.length > 3) ? partes[3].trim() : "";
+            double vlrTotal   = (partes.length > 4 && !partes[4].trim().isEmpty())
+                                ? Double.parseDouble(partes[4].trim()) : 0.0;
+            return new Pedido(codPedido, idCliente, dtPedido, dtEntrega, vlrTotal);
+        } catch (Exception e) {
+            System.err.println("Linha de pedido inválida: " + linha);
+            return null;
+        }
+    }
+        
+    @Override
+    public String toString() {
+        return "Pedido{cod=" + cod_pedido +
+               ", cliente=" + id_cliente +
+               ", data='" + dt_pedido + '\'' +
+               ", entrega='" + dt_entrega + '\'' +
+               ", total=" + String.format("%.2f", vlr_total) + "}";
     }
     
 }

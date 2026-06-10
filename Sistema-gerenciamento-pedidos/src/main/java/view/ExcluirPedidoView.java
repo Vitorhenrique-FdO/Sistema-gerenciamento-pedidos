@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package sistema.gerenciamento.pedidos.view;
 
 /**
@@ -11,13 +8,35 @@ package sistema.gerenciamento.pedidos.view;
 public class ExcluirPedidoView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ExcluirPedidoView.class.getName());
+    private final Controller.PedidoController pedidoCtrl = new Controller.PedidoController();
 
-    /**
-     * Creates new form ExcluirProdutoView
-     */
+    // Creates new form ExcluirPedidoView
+    
     public ExcluirPedidoView() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
+
+    /** Carrega o pedido na tabela ao pressionar Enter no campo de código. */
+    private void buscarPedidoParaExcluir() {
+        String codStr = jTextField1.getText().trim();
+        if (codStr.isEmpty()) return;
+        try {
+            int cod = Integer.parseInt(codStr);
+            model.Pedido p = pedidoCtrl.consultar(cod);
+            javax.swing.table.DefaultTableModel modelo =
+                (javax.swing.table.DefaultTableModel) jTable2.getModel();
+            modelo.setRowCount(0);
+            if (p == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Pedido " + cod + " não encontrado.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            } else {
+                modelo.addRow(new Object[]{ p.getIdCliente(), p.getCodPedido() });
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Código inválido.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -12,12 +12,36 @@ public class ListarPedido extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ListarPedido.class.getName());
 
+    private final Controller.PedidoController pedidoCtrl = new Controller.PedidoController();
+
     /**
      * Creates new form ListarPedido
      */
     public ListarPedido() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        // Conecta o botão Listar
+        jButton1.addActionListener(e -> carregarPedidos());
+        // Carrega automaticamente ao abrir
+        carregarPedidos();
     }
+
+    /** Carrega todos os pedidos na tabela. */
+    private void carregarPedidos() {
+        javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+        for (model.Pedido p : pedidoCtrl.listar()) {
+            modelo.addRow(new Object[]{
+                p.getCodPedido(),
+                p.getIdCliente(),
+                p.getDtPedido(),
+                p.getDtEntrega(),
+                String.format("R$ %.2f", p.getVlrTotal())
+            });
+        }
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

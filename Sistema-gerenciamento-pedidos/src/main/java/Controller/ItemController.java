@@ -6,7 +6,7 @@ import repository.ItemRepository;
 
 import java.util.List;
 
-public class Item {
+public class ItemController {
 
     private final ItemRepository   itemRepo    = new ItemRepository();
     private final PedidoController pedidoCtrl  = new PedidoController();
@@ -90,12 +90,12 @@ public class Item {
         itemRepo.alterar(item);
 
         // ajusta o estoque pela diferença
-        //    diferenca positivo  precisa deduzir mais
-        //    diferenca negativo  devolve ao estoque
+        
         produtoCtrl.ajustarEstoque(item.getCodProduto(), -diferenca);
 
        //calculo do total
-
+        pedidoCtrl.recalcularTotal(codPedido);
+        
         return "";
     }
 
@@ -121,12 +121,18 @@ public class Item {
     }
 
     // CONSULTAR 
-    public Item consultar(int codPedido, int seqItem) {
+    public model.Item consultar(int codPedido, int seqItem) {
         return itemRepo.consultar(codPedido, seqItem);
     }
 
     //  LISTAR ITENS DE UM PEDIDO 
-    public List<Item> listarPorPedido(int codPedido) {
+    public List<model.Item> listarPorPedido(int codPedido) {
         return itemRepo.listarPorPedido(codPedido);
     }
+    
+    // LISTAR TODOS OS ITENS 
+     public List<model.Item> listar() {
+        return itemRepo.listar();
+    }
+     
 }

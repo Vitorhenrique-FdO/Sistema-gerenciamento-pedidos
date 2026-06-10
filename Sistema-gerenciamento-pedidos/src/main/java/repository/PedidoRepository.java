@@ -12,7 +12,11 @@ package repository;
 public class PedidoRepository {
 
     private static final String ARQUIVO = "data/pedidos.csv";
-
+    
+    public PedidoRepository() {
+        ArquivoUtil.garantirDiretorioDados();
+    }
+    
     // Listar todos os pedidos
     public List<Pedido> listar() {
         List<Pedido> pedidos = new ArrayList<>();
@@ -28,14 +32,14 @@ public class PedidoRepository {
     }
 
     // Consultar pedido pelo código
-    public Pedido consultar(int codPedido) {
+    public Pedido consultar(int cod_pedido) {
         for (Pedido p : listar()) {
             if (p.getCod_pedido() == cod_pedido) {
                 return p;
             }
-        } else { 
-                 return null; // não encontrado
-                }
+        } 
+        return null; // não encontrado
+               
        
     }
 
@@ -70,37 +74,37 @@ public class PedidoRepository {
         salvarTodos(pedidos);
     }
 
-    // Formador de codigos VERIFICARRRRRR 
+    // Retorna o próximo código disponível (maior código existente + 1).
+     
     public int proximoCodigo() {
         List<Pedido> pedidos = listar();
-        if (pedidos.isEmpty()) {
-            return 1;
-        }
-        // pega o maior código existente e soma 1
+        if (pedidos.isEmpty()) return 1;
         int maior = 0;
         for (Pedido p : pedidos) {
-            if (p.getCod_pedido() > maior) {
-                maior = p.getCod_pedido();
-            } 
+            if (p.getCodPedido() > maior) {
+                maior = p.getCodPedido();
+            }
         }
         return maior + 1;
     }
 
-    // Verificando se já existe pedido com esse código
+    // Verifica se existe pedido com o código fornecido.
+     
     public boolean existe(int cod_pedido) {
         return consultar(cod_pedido) != null;
     }
 
-    // Verificando se existe pedido  ligado a um cliente 
+    //Verifica se existe pedido vinculado a um cliente.
+    //Utilizado para impedir exclusão de cliente com pedidos ativos.
+ 
     public boolean existePedidoDoCliente(int id_cliente) {
         for (Pedido p : listar()) {
-            if (p.getId_cliente() == id_cliente) {
+            if (p.getIdCliente() == id_cliente) {
                 return true;
             }
         }
         return false;
     }
-
    
 
     //Converte uma linha CSV em objeto Pedido e verifica a linha

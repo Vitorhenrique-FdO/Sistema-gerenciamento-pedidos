@@ -1,24 +1,95 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package sistema.gerenciamento.pedidos.view;
 
-/**
- *
- * @author vitor
- */
 public class AlterarPedidoView extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(AlterarPedidoView.class.getName());
-
+    private final Controller.PedidoController pedidoCtrl = new Controller.PedidoController();
+    
+    private model.Pedido pedidoAtual = null;
     /**
      * Creates new form AlterarProdutoView
      */
     public AlterarPedidoView() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        configurarBotoes();
+    }
+   
+    private void configurarBotoes() {
+        // jButton2 = BUSCAR
+        jButton2.addActionListener(e -> buscarPedido());
+        jTextField1.addActionListener(e -> buscarPedido());
+
+        // jButton1 = SALVAR
+        jButton1.addActionListener(e -> salvarAlteracao());
+
+        // jButton3 = ALTERAR OUTRO
+        jButton3.addActionListener(e -> {
+            jTextField1.setText("");
+            ((javax.swing.table.DefaultTableModel) jTable1.getModel()).setRowCount(0);
+            pedidoAtual = null;
+            jTextField1.requestFocus();
+        });
+
+        // jButton4 = SAIR
+        jButton4.addActionListener(e -> {
+            new view.PedidoPrincipalView().setVisible(true);
+            this.dispose();
+        });
     }
 
+    private void buscarPedido() {
+        String codStr = jTextField1.getText().trim();
+        if (codStr.isEmpty()) return;
+        try {
+            int cod = Integer.parseInt(codStr);
+            pedidoAtual = pedidoCtrl.consultar(cod);
+            javax.swing.table.DefaultTableModel modelo =
+                (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            modelo.setRowCount(0);
+            if (pedidoAtual == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Pedido " + cod + " não encontrado.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            } else {
+                modelo.addRow(new Object[]{
+                    pedidoAtual.getCodPedido(),
+                    pedidoAtual.getIdCliente(),
+                    pedidoAtual.getDtPedido(),
+                    pedidoAtual.getDtEntrega(),
+                    String.format("R$ %.2f", pedidoAtual.getVlrTotal())
+                });
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Código inválido.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void salvarAlteracao() {
+        if (pedidoAtual == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Busque um pedido primeiro.");
+            return;
+        }
+        // Lê os dados editáveis diretamente da tabela
+        javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        if (modelo.getRowCount() == 0) return;
+        try {
+            int idCliente  = Integer.parseInt(modelo.getValueAt(0, 1).toString().trim());
+            // Col 2 = dt_pedido (não editável), col 3 = dt_entrega (editável)
+            String dtEntrega = modelo.getValueAt(0, 3) != null ? modelo.getValueAt(0, 3).toString().trim() : "";
+            String erro = pedidoCtrl.alterar(pedidoAtual.getCodPedido(), idCliente, dtEntrega);
+            if (erro.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Pedido alterado com sucesso!");
+                buscarPedido(); // Recarrega
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, erro, "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Dados inválidos: " + ex.getMessage(), "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

@@ -19,6 +19,26 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
         initComponents();
     }
 
+    private void btnNovoPedidoActionPerformed(java.awt.event.ActionEvent evt) {
+        new incluirPedido().setVisible(true);
+        this.dispose();
+    }
+
+    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {
+        new AlterarPedidoView().setVisible(true);
+        this.dispose();
+    }
+
+    private void btnConsultarActionPerformed(java.awt.event.ActionEvent evt) {
+        new ConsultaPedido().setVisible(true);
+        this.dispose();
+    }
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {
+        new ExcluirPedidoView().setVisible(true);
+        this.dispose();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

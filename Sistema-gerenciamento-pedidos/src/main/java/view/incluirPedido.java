@@ -4,6 +4,7 @@
  */
 package view;
 
+
 /**
  *
  * @author vitor
@@ -12,12 +13,126 @@ public class incluirPedido extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(incluirPedido.class.getName());
 
+    // ─── Controllers ─────────────────────────────────────────────────────────
+    private final Controller.PedidoController  pedidoCtrl  = new Controller.PedidoController();
+    private final Controller.ItemController    itemCtrl    = new Controller.ItemController();
+    private final Controller.ProdutoController produtoCtrl = new Controller.ProdutoController();
+
+    /** Código do pedido em aberto durante esta sessão de inclusão. */
+    private int codPedidoAtual = 0;
+
     /**
-     * Creates new form incluirPedido
+     * Cria novo formulário incluirPedido.
+     * Ao abrir, solicita o id do cliente e cria o pedido automaticamente.
      */
     public incluirPedido() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        inicializarPedido();
+        configurarBotoes();
     }
+
+    /**
+     * Solicita o id do cliente, cria o pedido e inicializa a tela.
+     */
+    private void inicializarPedido() {
+        String idClienteStr = javax.swing.JOptionPane.showInputDialog(this, "Informe o ID do cliente:");
+        if (idClienteStr == null || idClienteStr.trim().isEmpty()) {
+            // Usuário cancelou — volta para o menu
+            this.dispose();
+            return;
+        }
+        try {
+            int idCliente = Integer.parseInt(idClienteStr.trim());
+            // Data de entrega pode ser informada depois na tela de alterar
+            String erro = pedidoCtrl.incluir(idCliente, "");
+            if (!erro.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, erro, "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+                this.dispose();
+                return;
+            }
+            // O pedido foi criado; pega o código gerado
+            java.util.List<model.Pedido> todos = pedidoCtrl.listar();
+            codPedidoAtual = todos.get(todos.size() - 1).getCodPedido();
+            jTextField1.setText(String.valueOf(idCliente));
+            // Mostra a data do pedido
+            jTextField2.setText(todos.get(todos.size() - 1).getDtPedido());
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "ID de cliente inválido.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            this.dispose();
+        }
+    }
+
+    /**
+     * Configura os action listeners dos botões que não foram definidos no form editor.
+     */
+    private void configurarBotoes() {
+        // jButton2 = Buscar produto
+        jButton2.addActionListener(e -> {
+            String codStr = javax.swing.JOptionPane.showInputDialog(this, "Informe o código do produto:");
+            if (codStr == null || codStr.trim().isEmpty()) return;
+            try {
+                int cod = Integer.parseInt(codStr.trim());
+                model.Produto p = produtoCtrl.consultar(cod);
+                if (p == null) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Produto não encontrado.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                String qtdeStr = javax.swing.JOptionPane.showInputDialog(this, "Quantidade de \"" + p.getNome() + "\" (estoque: " + p.getQtdeProduto() + "):");
+                if (qtdeStr == null || qtdeStr.trim().isEmpty()) return;
+                int qtde = Integer.parseInt(qtdeStr.trim());
+                String erro = itemCtrl.incluir(codPedidoAtual, cod, qtde);
+                if (erro.isEmpty()) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Produto adicionado!");
+                    carregarItensNaTabela();
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, erro, "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (NumberFormatException ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Código/quantidade inválido.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        // jButton3 = Calcular valor total
+        jButton3.addActionListener(e -> {
+            model.Pedido pedido = pedidoCtrl.consultar(codPedidoAtual);
+            if (pedido != null) {
+                jLabel6.setText("Valor Total = R$ " + String.format("%.2f", pedido.getVlrTotal()));
+            }
+        });
+
+        // jButton5 = Confirmar
+        jButton5.addActionListener(e -> {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Pedido " + codPedidoAtual + " salvo com sucesso!\nValor total será calculado automaticamente.");
+            new view.PedidoPrincipalView().setVisible(true);
+            this.dispose();
+        });
+    }
+
+    /**
+     * Carrega os itens do pedido atual na tabela.
+     */
+    private void carregarItensNaTabela() {
+        javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+        java.util.List<model.Item> itens = itemCtrl.listarPorPedido(codPedidoAtual);
+        double total = 0.0;
+        for (model.Item item : itens) {
+            model.Produto p = produtoCtrl.consultar(item.getCodProduto());
+            String nome = (p != null) ? p.getNome() : "?";
+            modelo.addRow(new Object[]{
+                nome,
+                item.getSeqItem(),
+                String.format("R$ %.2f", item.getPrecoUniItem()),
+                item.getQtdeItens()
+            });
+            total += item.getPrecoTotal();
+        }
+        jLabel6.setText("Valor Total = R$ " + String.format("%.2f", total));
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

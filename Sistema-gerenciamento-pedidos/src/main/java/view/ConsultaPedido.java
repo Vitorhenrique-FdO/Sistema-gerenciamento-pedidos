@@ -11,12 +11,61 @@ package view;
 public class ConsultaPedido extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ConsultaPedido.class.getName());
-
+    private final Controller.PedidoController pedidoCtrl = new Controller.PedidoController();
+    /** Campo de busca atual selecionado pelo usuário. */
+    private String campoBusca = "cod_pedido";
+    
     /**
      * Creates new form ConsultaPedido
      */
     public ConsultaPedido() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        configurarBotoes();
+    }
+    private void configurarBotoes() {
+        // Botões de seleção de campo
+        jButton1.addActionListener(e -> { campoBusca = "id_cliente";  jLabel3.setText("Digite o ID do cliente:"); });
+        jButton2.addActionListener(e -> { campoBusca = "cod_pedido"; jLabel3.setText("Digite o código do pedido:"); });
+        jButton3.addActionListener(e -> { campoBusca = "dt_pedido";  jLabel3.setText("Digite a data (dd/MM/yyyy):"); });
+        jButton4.addActionListener(e -> { campoBusca = "dt_entrega"; jLabel3.setText("Digite a data de entrega (dd/MM/yyyy):"); });
+        jButton5.addActionListener(e -> { campoBusca = "vlr_total";  jLabel3.setText("Digite o valor total:"); });
+
+        // Campo de texto: busca ao pressionar Enter
+        jTextField1.addActionListener(e -> buscarPedidos());
+
+        // Botão Sair
+        jButton6.addActionListener(e -> {
+            new view.PedidoPrincipalView().setVisible(true);
+            this.dispose();
+        });
+    }
+
+    private void buscarPedidos() {
+        String termo = jTextField1.getText().trim();
+        javax.swing.table.DefaultTableModel modelo =
+            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        modelo.setRowCount(0);
+
+        java.util.List<model.Pedido> todos = pedidoCtrl.listar();
+        for (model.Pedido p : todos) {
+            boolean incluir = false;
+            switch (campoBusca) {
+                case "id_cliente":  incluir = String.valueOf(p.getIdCliente()).contains(termo); break;
+                case "cod_pedido": incluir = String.valueOf(p.getCodPedido()).contains(termo); break;
+                case "dt_pedido":  incluir = p.getDtPedido().contains(termo);  break;
+                case "dt_entrega": incluir = p.getDtEntrega().contains(termo); break;
+                case "vlr_total":  incluir = String.format("%.2f", p.getVlrTotal()).contains(termo); break;
+                default:           incluir = true;
+            }
+            if (incluir) {
+                modelo.addRow(new Object[]{
+                    p.getCodPedido(), p.getIdCliente(),
+                    p.getDtPedido(), p.getDtEntrega(),
+                    String.format("R$ %.2f", p.getVlrTotal())
+                });
+            }
+        }
     }
 
     /**
