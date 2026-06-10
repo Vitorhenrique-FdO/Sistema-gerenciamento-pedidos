@@ -14,6 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 
 public class ProdutoMenu extends javax.swing.JFrame {
+    
     private ProdutoController controller = new ProdutoController();
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ProdutoMenu.class.getName());
@@ -23,6 +24,7 @@ public class ProdutoMenu extends javax.swing.JFrame {
      */
     public ProdutoMenu() {
         initComponents();
+        carregarTabela(controller.listarProdutos());
     }
 
     /**
@@ -57,7 +59,7 @@ public class ProdutoMenu extends javax.swing.JFrame {
             .addGap(0, 288, Short.MAX_VALUE)
         );
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -239,6 +241,7 @@ public class ProdutoMenu extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
@@ -247,6 +250,24 @@ public class ProdutoMenu extends javax.swing.JFrame {
 
     private void jTextField1KeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyTyped
         // TODO add your handling code here:
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            String texto = jTextField1.getText().trim();
+            if (texto.isEmpty()) {
+                carregarTabela(controller.listarProdutos());
+                return;
+            }
+            try {
+                int cod = Integer.parseInt(texto);
+                Produto p = controller.consultarProduto(cod);
+                if (p != null) {
+                    carregarTabela(java.util.Arrays.asList(p));
+                } else {
+                    carregarTabela(new java.util.ArrayList<>());
+                }
+            } catch (NumberFormatException e) {
+                carregarTabela(new java.util.ArrayList<>());
+            }
+        });
     }//GEN-LAST:event_jTextField1KeyTyped
 
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
