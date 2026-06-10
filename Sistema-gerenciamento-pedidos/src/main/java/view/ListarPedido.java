@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 
 /**
@@ -14,9 +11,7 @@ public class ListarPedido extends javax.swing.JFrame {
 
     private final Controller.PedidoController pedidoCtrl = new Controller.PedidoController();
 
-    /**
-     * Creates new form ListarPedido
-     */
+   
     public ListarPedido() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -26,7 +21,7 @@ public class ListarPedido extends javax.swing.JFrame {
         carregarPedidos();
     }
 
-    /** Carrega todos os pedidos na tabela. */
+    //Carrega todos os pedidos na tabela. 
     private void carregarPedidos() {
         javax.swing.table.DefaultTableModel modelo =
             (javax.swing.table.DefaultTableModel) jTable1.getModel();

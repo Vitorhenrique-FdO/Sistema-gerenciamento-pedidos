@@ -3,136 +3,126 @@ package Controller;
 import model.Item;
 import model.Produto;
 import repository.ItemRepository;
-
 import java.util.List;
 
+// cuida de toda a logica dos itens do pedido (estoque, calcular valor)
 public class ItemController {
 
     private final ItemRepository   itemRepo    = new ItemRepository();
     private final PedidoController pedidoCtrl  = new PedidoController();
     private final ProdutoController produtoCtrl = new ProdutoController();
 
-    // incluir
-   
+    // joga um item pra dentro do pedido
     public String incluir(int codPedido, int codProduto, int qtdeItens) {
 
-        // pedido existe?
+        // pedido nao existe, barra
         if (!pedidoCtrl.existe(codPedido)) {
-            return "Pedido " + codPedido + " não encontrado.";
+            return "O pedido " + codPedido + " nao existe.";
         }
 
-        // produto existe?
+        // produto nao existe, barra
         Produto produto = produtoCtrl.consultar(codProduto);
         if (produto == null) {
-            return "Produto " + codProduto + " não encontrado.";
+            return "Produto " + codProduto + " nao achado no sistema.";
         }
 
-        // quantidade deve ser positiva
+        // qtd negativa ou 0 nao tem como
         if (qtdeItens <= 0) {
-            return "Quantidade deve ser maior que zero.";
+            return "Coloca uma quantidade direito (maior que 0).";
         }
 
-        // estoque suficiente?
+        // confere se tem estoque
         if (!produtoCtrl.temEstoque(codProduto, qtdeItens)) {
-            return "Estoque insuficiente. Disponível: " + produto.getQtdeProduto()
-                 + " | Solicitado: " + qtdeItens;
+            return "Ixi, faltou estoque. So tem: " + produto.getQtde_produto()
+                 + " | Vc pediu: " + qtdeItens;
         }
 
-        // determina a proxima sequencia                                                            
+        // gera o numero da sequencia do item na lista
         int seqItem = itemRepo.proximaSequencia(codPedido);
 
-        // preço unitário = preço do produto AGORA 
+        // a gente tranca o preco na hora que vende (se subir amanha, nao altera aqui)
         double precoUni = produto.getPreco();
 
-        // cria o item (preco_total calculado no construtor)
+        // monta o item e salva (o preco total ele calcula sozinho la dentro)
         Item novoItem = new Item(codPedido, seqItem, codProduto, qtdeItens, precoUni);
-
-        // salva o item
         itemRepo.incluir(novoItem);
 
-        // deduz do estoque
+        // tira do estoque pq a gente vendeu
         produtoCtrl.deduzirEstoque(codProduto, qtdeItens);
 
-        // recalcula o total do pedido
+        // atualiza o vlr_total do pedido 
         pedidoCtrl.recalcularTotal(codPedido);
 
-        return ""; // sucesso
-    }
-
-    //ALTERAR QUANTIDADE 
-   
-    public String alterarQuantidade(int codPedido, int seqItem, int novaQtde) {
-
-        // item deve existir
-        Item item = itemRepo.consultar(codPedido, seqItem);
-        if (item == null) {
-            return "Item (pedido=" + codPedido + ", seq=" + seqItem + ") não encontrado.";
-        }
-
-        // quantidade deve ser positiva
-        if (novaQtde <= 0) {
-            return "Quantidade deve ser maior que zero.";
-        }
-
-        int qtdeAntiga = item.getQtdeItens();
-        int diferenca  = novaQtde - qtdeAntiga; // positivo = precisa mais, negativo = vai devolver
-
-        // se vai pedir mais, verifica se tem estoque para a diferença
-        if (diferenca > 0 && !produtoCtrl.temEstoque(item.getCodProduto(), diferenca)) {
-            Produto p = produtoCtrl.consultar(item.getCodProduto());
-            int disponivel = (p != null) ? p.getQtdeProduto() : 0;
-            return "Estoque insuficiente para o acréscimo. Disponível: " + disponivel
-                 + " | Acréscimo solicitado: " + diferenca;
-        }
-
-        // atualiza a quantidade no item (preco_total recalculado pelo setter)
-        item.setQtdeItens(novaQtde);
-        itemRepo.alterar(item);
-
-        // ajusta o estoque pela diferença
-        
-        produtoCtrl.ajustarEstoque(item.getCodProduto(), -diferenca);
-
-       //calculo do total
-        pedidoCtrl.recalcularTotal(codPedido);
-        
         return "";
     }
 
-    // EXCLUIR 
-    
+    // quando for mudar a qtd de um item que ja ta la
+    public String alterarQuantidade(int codPedido, int seqItem, int novaQtde) {
+
+        Item item = itemRepo.consultar(codPedido, seqItem);
+        if (item == null) {
+            return "Esse item ai sumiu (pedido=" + codPedido + ", seq=" + seqItem + ").";
+        }
+
+        if (novaQtde <= 0) {
+            return "Quantidade tem que ser mais que zero ne.";
+        }
+
+        int qtdeAntiga = item.getQtde_itens();
+        // ve a diferenca. ex: tinha 2, quer 5 = precisa de 3. / tinha 5 quer 2 = sobrou 3.
+        int diferenca  = novaQtde - qtdeAntiga;
+
+        // se quer mais, tem que ver se sobrou estoque
+        if (diferenca > 0 && !produtoCtrl.temEstoque(item.getCod_produto(), diferenca)) {
+            Produto p = produtoCtrl.consultar(item.getCod_produto());
+            int disponivel = (p != null) ? p.getQtde_produto() : 0;
+            return "Sem estoque pra isso. Tem " + disponivel
+                 + " | Vc quer colocar mais " + diferenca;
+        }
+
+        // atualiza (ele calcula o total na hora)
+        item.setQtde_itens(novaQtde);
+        itemRepo.alterar(item);
+
+        // mexe no estoque usando a diferenca
+        produtoCtrl.ajustarEstoque(item.getCod_produto(), -diferenca);
+
+        // atualiza o total da compra dnv
+        pedidoCtrl.recalcularTotal(codPedido);
+
+        return "";
+    }
+
+    // tira o item da compra
     public String excluir(int codPedido, int seqItem) {
 
         Item item = itemRepo.consultar(codPedido, seqItem);
         if (item == null) {
-            return "Item (pedido=" + codPedido + ", seq=" + seqItem + ") não encontrado.";
+            return "Item (pedido=" + codPedido + ", seq=" + seqItem + ") nao achado.";
         }
 
-        // devolve a quantidade ao estoque antes de excluir
-        produtoCtrl.devolverEstoque(item.getCodProduto(), item.getQtdeItens());
+        // volta pro estoque antes de apagar, senao a gente perde a mercadoria
+        produtoCtrl.devolverEstoque(item.getCod_produto(), item.getQtde_itens());
 
-        // Remove o item
+        // deleta
         itemRepo.excluir(codPedido, seqItem);
 
-        // Recalcula o total do pedido
+        // reculcula o pedido dnv
         pedidoCtrl.recalcularTotal(codPedido);
 
         return "";
     }
 
-    // CONSULTAR 
+    // atalhos pra view usar
     public model.Item consultar(int codPedido, int seqItem) {
         return itemRepo.consultar(codPedido, seqItem);
     }
 
-    //  LISTAR ITENS DE UM PEDIDO 
     public List<model.Item> listarPorPedido(int codPedido) {
         return itemRepo.listarPorPedido(codPedido);
     }
-    
-    // LISTAR TODOS OS ITENS 
-     public List<model.Item> listar() {
+
+    public List<model.Item> listar() {
         return itemRepo.listar();
     }
-     
 }

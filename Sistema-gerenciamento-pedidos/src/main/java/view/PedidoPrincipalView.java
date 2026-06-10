@@ -1,20 +1,13 @@
-s/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package sistema.gerenciamento.pedidos.view;
+package view;
 
 /**
  *
  * @author vitor
  */
 public class PedidoPrincipalView extends javax.swing.JFrame {
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PedidoPrincipalView.class.getName());
 
-    /**
-     * Creates new form PedidoPrincipalView
-     */
+    
     public PedidoPrincipalView() {
         initComponents();
     }

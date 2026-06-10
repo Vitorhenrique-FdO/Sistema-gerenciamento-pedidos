@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 
 import model.Item;
@@ -14,22 +11,21 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ItemView extends javax.swing.JFrame {
     
-    private final Controller.Item itemCtrl = new Controller.Item();
+    // ItemController é o controlador responsável pelas operações de item
+    private final Controller.ItemController itemCtrl = new Controller.ItemController();
     private final Controller.ProdutoController prodCtrl = new Controller.ProdutoController();
     private int codPedidoAtual; //guardar o codigo do pedido aqui
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(ItemView.class.getName());
 
-    /**
-     * Creates new form ItemView
-     */
-    public ItemView() {
+    //Construtor que recebe o código do pedido de itens
+    
+    public ItemView(int codPedido) {
         initComponents();
-        this codPedidoAtual = codPedido;
+        this.codPedidoAtual = codPedido;           // guarda o código do pedido
         txtCodPedido.setText(String.valueOf(codPedido));
         lblInfoPedido.setText("Itens do Pedido PED-" + codPedido);
         this.setLocationRelativeTo(null);
-        
         carregarTabela();
     }
 
@@ -352,7 +348,29 @@ public class ItemView extends javax.swing.JFrame {
         txtQuantidade.setText("");
         txtPrecoUnitario.setText("");
         txtCodProduto.requestFocus();
-    }//GEN-LAST:event_btnLimparActionPerformed
+    }
+    
+    private void carregarTabela() {
+        DefaultTableModel modelo = (DefaultTableModel) tblItens.getModel();
+        modelo.setRowCount(0);
+        List<Item> itens = itemCtrl.listarPorPedido(codPedidoAtual);
+        double totalPedido = 0;
+        for (Item item : itens) {
+            model.Produto p = prodCtrl.consultar(item.getCod_produto());
+            String desc = p != null ? p.getNome() : "Desconhecido";
+            modelo.addRow(new Object[]{
+                item.getSeq_item(),
+                item.getCod_produto(),
+                desc,
+                item.getQtde_itens(),
+                String.format("R$ %.2f", item.getPreco_uniItem()),
+                String.format("R$ %.2f", item.getPreco_total())
+            });
+            totalPedido += item.getPreco_total();
+        }
+        lblValorTotal.setText(String.format("R$ %.2f", totalPedido));
+    }
+    //GEN-LAST:event_btnLimparActionPerformed
 
     /**
      * @param args the command line arguments
@@ -376,7 +394,8 @@ public class ItemView extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new ItemView().setVisible(true));
+        // Para testar, abre com pedido de código 1 como exemplo
+        java.awt.EventQueue.invokeLater(() -> new ItemView(1).setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -1,5 +1,5 @@
 
-package sistema.gerenciamento.pedidos.view;
+package view;
 
 /**
  *

@@ -1,132 +1,115 @@
 package repository;
 
+import Util.ArquivoUtil;
+import model.Pedido;
+import java.util.ArrayList;
+import java.util.List;
 
-  
-      import model.Pedido;
-    //import util.ArquivoUtil; verificar se eh isso mesmo 
-
-    import java.util.ArrayList;
-    import java.util.List;
-
-
+// salva e le os pedidos no txt/csv
 public class PedidoRepository {
 
     private static final String ARQUIVO = "data/pedidos.csv";
-    
+
     public PedidoRepository() {
+        // cria a pasta data se nao existir ainda
         ArquivoUtil.garantirDiretorioDados();
     }
-    
-    // Listar todos os pedidos
+
+    // traz todos os pedidos do arquivo
     public List<Pedido> listar() {
         List<Pedido> pedidos = new ArrayList<>();
-
         for (String linha : ArquivoUtil.lerLinhas(ARQUIVO)) {
             Pedido p = linhaParaPedido(linha);
             if (p != null) {
                 pedidos.add(p);
             }
         }
-
         return pedidos;
     }
 
-    // Consultar pedido pelo código
-    public Pedido consultar(int cod_pedido) {
+    // acha um pedido pelo codigo
+    public Pedido consultar(int codPedido) {
         for (Pedido p : listar()) {
-            if (p.getCod_pedido() == cod_pedido) {
+            if (p.getCod_pedido() == codPedido) {
                 return p;
             }
-        } 
-        return null; // não encontrado
-               
-       
+        }
+        return null; // se nao achar nada
     }
 
-    // Incluir novo pedido
+    // cria um pedido novo
     public void incluir(Pedido pedido) {
         List<Pedido> pedidos = listar();
         pedidos.add(pedido);
         salvarTodos(pedidos);
     }
 
-    // Alterando pedido existente
+    // atualiza o pedido que ja existe
     public void alterar(Pedido pedidoAlterado) {
         List<Pedido> pedidos = listar();
-
         for (int i = 0; i < pedidos.size(); i++) {
             if (pedidos.get(i).getCod_pedido() == pedidoAlterado.getCod_pedido()) {
-                pedidos.set(i, pedidoAlterado); // substitui na posição, verificar se o nome esta certo
+                pedidos.set(i, pedidoAlterado); // substitui pelo novo
                 break;
             }
         }
-
         salvarTodos(pedidos);
     }
 
-    // Excluir pedido pelo código, melhor forma? 
+    // apaga o pedido
     public void excluir(int codPedido) {
         List<Pedido> pedidos = listar();
-
-        // remove o pedido com o código mandado 
-        pedidos.removeIf(p -> p.getCod_pedido() == cod_pedido);
-
+        // joga fora o que tiver o codigo igual
+        pedidos.removeIf(p -> p.getCod_pedido() == codPedido);
         salvarTodos(pedidos);
     }
 
-    // Retorna o próximo código disponível (maior código existente + 1).
-     
+    // descobre qual eh o proximo id livre
     public int proximoCodigo() {
         List<Pedido> pedidos = listar();
         if (pedidos.isEmpty()) return 1;
         int maior = 0;
         for (Pedido p : pedidos) {
-            if (p.getCodPedido() > maior) {
-                maior = p.getCodPedido();
+            if (p.getCod_pedido() > maior) {
+                maior = p.getCod_pedido();
             }
         }
-        return maior + 1;
+        return maior + 1; // soma 1 no maior que achou
     }
 
-    // Verifica se existe pedido com o código fornecido.
-     
-    public boolean existe(int cod_pedido) {
-        return consultar(cod_pedido) != null;
+    // ve se o pedido existe
+    public boolean existe(int codPedido) {
+        return consultar(codPedido) != null;
     }
 
-    //Verifica se existe pedido vinculado a um cliente.
-    //Utilizado para impedir exclusão de cliente com pedidos ativos.
- 
-    public boolean existePedidoDoCliente(int id_cliente) {
+    // verifica se o cliente tem algum pedido (pra barrar na hora de excluir o cliente)
+    public boolean existePedidoDoCliente(int idCliente) {
         for (Pedido p : listar()) {
-            if (p.getIdCliente() == id_cliente) {
+            if (p.getId_cliente() == idCliente) {
                 return true;
             }
         }
         return false;
     }
-   
 
-    //Converte uma linha CSV em objeto Pedido e verifica a linha
+    // passa a string do csv pro objeto pedido
     private Pedido linhaParaPedido(String linha) {
         try {
-            String[] campos = linha.split(";");
-            // para ser assim [0]cod_pedido [1]id_cliente [2]dt_pedido [3]dt_entrega [4]vlr_total
-            int    cod_pedido = Integer.parseInt(campos[0].trim());
-            int    id_cliente = Integer.parseInt(campos[1].trim());
-            String dt_dedido  = campos[2].trim();
-            String dt_entrega = campos[3].trim(); // pode ser vazio
-            double vlr_total  = Double.parseDouble(campos[4].trim());
-
-            return new Pedido(cod_pedido, id_ciente, dt_pedido, dt_entrega, vlr_total);
-
+            String[] campos = linha.split(";", -1);
+            int    codPedido = Integer.parseInt(campos[0].trim());
+            int    idCliente = Integer.parseInt(campos[1].trim());
+            String dtPedido  = campos[2].trim();
+            String dtEntrega = (campos.length > 3) ? campos[3].trim() : "";
+            double vlrTotal  = (campos.length > 4 && !campos[4].trim().isEmpty())
+                               ? Double.parseDouble(campos[4].trim()) : 0.0;
+            return new Pedido(codPedido, idCliente, dtPedido, dtEntrega, vlrTotal);
         } catch (Exception e) {
-            System.err.println("Linha inválida ignorada no CSV de pedidos: " + linha);
+            System.err.println("linha do pedido deu erro: " + linha);
             return null;
         }
     }
 
-    // Converte a lista de pedidos em linhas CSV e salva o arquivo
+    // grava tudo no arquivo de novo
     private void salvarTodos(List<Pedido> pedidos) {
         List<String> linhas = new ArrayList<>();
         for (Pedido p : pedidos) {
@@ -135,6 +118,3 @@ public class PedidoRepository {
         ArquivoUtil.escreverLinhas(ARQUIVO, linhas);
     }
 }
-    
-}
-

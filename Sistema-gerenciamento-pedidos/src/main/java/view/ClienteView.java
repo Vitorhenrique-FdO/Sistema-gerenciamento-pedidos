@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
+
 package view;
 
 import java.util.HashSet;
@@ -28,9 +25,7 @@ public class ClienteView extends javax.swing.JFrame {
         txtId.setText(String.valueOf(control.gerarProximoId()));
     }
     
-    /**
-     * Creates new form ClienteView
-     */
+  
     public ClienteView() {
         initComponents();
         this.setLocationRelativeTo(null); //centraliza a tela no meio com referencia a tela sendo utilizada

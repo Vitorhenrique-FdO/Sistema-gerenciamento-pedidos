@@ -13,17 +13,17 @@ public class incluirPedido extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(incluirPedido.class.getName());
 
-    // ─── Controllers ─────────────────────────────────────────────────────────
+    // Controllers 
     private final Controller.PedidoController  pedidoCtrl  = new Controller.PedidoController();
     private final Controller.ItemController    itemCtrl    = new Controller.ItemController();
     private final Controller.ProdutoController produtoCtrl = new Controller.ProdutoController();
 
-    /** Código do pedido em aberto durante esta sessão de inclusão. */
+    //Código do pedido em aberto durante esta sessão de inclusão
     private int codPedidoAtual = 0;
 
     /**
      * Cria novo formulário incluirPedido.
-     * Ao abrir, solicita o id do cliente e cria o pedido automaticamente.
+     * Ao abrir, solicita o id do cliente e cria o pedido automaticamente
      */
     public incluirPedido() {
         initComponents();
@@ -32,9 +32,8 @@ public class incluirPedido extends javax.swing.JFrame {
         configurarBotoes();
     }
 
-    /**
-     * Solicita o id do cliente, cria o pedido e inicializa a tela.
-     */
+    // Solicita o id do cliente, cria o pedido e inicializa a tela.
+     
     private void inicializarPedido() {
         String idClienteStr = javax.swing.JOptionPane.showInputDialog(this, "Informe o ID do cliente:");
         if (idClienteStr == null || idClienteStr.trim().isEmpty()) {
@@ -63,9 +62,8 @@ public class incluirPedido extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Configura os action listeners dos botões que não foram definidos no form editor.
-     */
+    //Configura os action listeners dos botões que não foram definidos no form editor.
+     
     private void configurarBotoes() {
         // jButton2 = Buscar produto
         jButton2.addActionListener(e -> {
@@ -110,9 +108,8 @@ public class incluirPedido extends javax.swing.JFrame {
         });
     }
 
-    /**
-     * Carrega os itens do pedido atual na tabela.
-     */
+    // Carrega os itens do pedido atual na tabela.
+     
     private void carregarItensNaTabela() {
         javax.swing.table.DefaultTableModel modelo =
             (javax.swing.table.DefaultTableModel) jTable1.getModel();
@@ -125,7 +122,7 @@ public class incluirPedido extends javax.swing.JFrame {
             modelo.addRow(new Object[]{
                 nome,
                 item.getSeqItem(),
-                String.format("R$ %.2f", item.getPrecoUniItem()),
+                String.format("R$ %.2f", item.getPrecoUni()),
                 item.getQtdeItens()
             });
             total += item.getPrecoTotal();

@@ -34,10 +34,9 @@ public class ArquivoUtil {
         return linhas;
     }
 
-    /**
-     * Escreve uma lista de strings em um arquivo CSV, sobrescrevendo o conteúdo anterior.
-     * Cria o diretório pai se não existir.
-     */
+    // Escreve uma lista de strings em um arquivo CSV, sobrescrevendo o conteúdo anterior.
+     //Cria o diretório pai se não existir.
+     
     public static void escreverLinhas(String nomeArquivo, List<String> linhas) {
         File arquivo = new File(nomeArquivo);
         // Garante que o diretório existe
@@ -46,7 +45,7 @@ public class ArquivoUtil {
             diretorio.mkdirs();
         }
 
-        // Escrita atômica: salva em arquivo temporário e renomeia
+        // salva em arquivo temporário e renomeia
         File temp = new File(nomeArquivo + ".tmp");
         try (BufferedWriter bw = new BufferedWriter(
                 new OutputStreamWriter(new FileOutputStream(temp), "UTF-8"))) {
@@ -66,9 +65,8 @@ public class ArquivoUtil {
         temp.renameTo(arquivo);
     }
 
-    /**
-     * Garante que o diretório "data/" existe, criando-o se necessário.
-     */
+    // ve se diretório "data/" existe, criando-o se necessário.
+     
     public static void garantirDiretorioDados() {
         new File("data").mkdirs();
     }
