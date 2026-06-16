@@ -254,18 +254,28 @@ public class ClienteView extends javax.swing.JFrame {
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {                                          
         // TODO add your handling code here:
         try {
-            String nome = txtNome.getText();
-            int id = Integer.parseInt(txtId.getText());
+            String nome = txtNome.getText().trim(); //trim pra ignorar espaços no começo e fim
+            //int id = Integer.parseInt(txtId.getText());
+            String idStr = txtId.getText();
             
             if (nome.isEmpty()){
                 javax.swing.JOptionPane.showMessageDialog(this, "Digite um nome");
                 return;
             }
+            
+            if (!nome.matches("^[a-zA-ZÀ-ÿ\\s]+$")){ //REGEX pra aceitar somente letras, com ou sem acentuação --- não aceita número e caracteres especiais
+                javax.swing.JOptionPane.showMessageDialog(this, "O nome deve conter apenas letras!");
+                return;
+            }
+            
+            int id= Integer.parseInt(idStr);
             control.salvar(id,nome);
+            
             javax.swing.JOptionPane.showMessageDialog(this, "Salvo com sucesso!");
             
             txtNome.setText(""); //limpando o campo
             atualizarTabela();//atualiza a lista na tela
+            btnStatus.setText("Cliente salvo!");
         } catch (Exception e){
             javax.swing.JOptionPane.showMessageDialog(this, "Erro ao salvar: "+ e.getMessage());
         }
