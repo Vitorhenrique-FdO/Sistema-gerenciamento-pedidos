@@ -37,7 +37,7 @@ public class PedidoController {
         // data de hoje automatica
         String dtPedido = LocalDate.now().format(FMT);
 
-        // checa a data de entrega se o cara digitou algo
+        // checa a data de entrega se o cara digitou algo dasd
         String dtEntregaFinal = "";
         if (dtEntrega != null && !dtEntrega.trim().isEmpty()) {
             String erro = validarDatas(dtPedido, dtEntrega.trim());
