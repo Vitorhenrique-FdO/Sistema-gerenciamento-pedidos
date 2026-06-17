@@ -37,21 +37,17 @@ public class incluirPedido extends javax.swing.JFrame {
         }
     }
     
-    // Método público para a tela BuscarProdutoPedido chamar e injetar o produto
+    // Método público para a tela BuscarProdutoPedido chamar e colocar o produto 
     public void adicionarProdutoVirtual(int codProduto, int qtde) {
-        model.Produto p = produtoCtrl.consultar(codProduto);
-        if (p != null) {
-            model.Item novoItem = new model.Item();
-            novoItem.setCod_pedido(codPedidoVirtual);
-            novoItem.setSeq_item(itensVirtuais.size() + 1); // Sequencia gerada
-            novoItem.setCod_produto(codProduto);
-            novoItem.setQtdeItens(qtde);
-            novoItem.setPreco_uniItem(p.getPreco());
-            itensVirtuais.add(novoItem);
-            carregarItensNaTabela();
-            atualizarTabelaPedido();
-        }
+    model.Produto p = produtoCtrl.consultar(codProduto);
+    if (p != null) {
+        int seq = itensVirtuais.size() + 1;
+        model.Item novoItem = new model.Item(codPedidoVirtual, seq, codProduto, qtde, p.getPreco());
+        itensVirtuais.add(novoItem);
+        carregarItensNaTabela();
+        atualizarTabelaPedido();
     }
+}
 
     //Configura os action listeners dos botões que não foram definidos no form editor.
      
@@ -332,14 +328,14 @@ public class incluirPedido extends javax.swing.JFrame {
                             .addComponent(jButtonSelecionarItem)
                             .addComponent(jButtonExcluirItem)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(237, 237, 237)
-                        .addComponent(jLabel4))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(250, 250, 250)
                         .addComponent(jLabel5))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(222, 222, 222)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(272, 272, 272)
+                        .addComponent(jLabel4)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
