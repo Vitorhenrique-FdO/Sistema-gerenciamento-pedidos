@@ -130,8 +130,8 @@ public class MenuView extends javax.swing.JFrame {
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
         // TODO add your handling code here:
         
-        view.ProdutoMenu telaProduto = new view.ProdutoMenu();
-        telaProduto.setVisible(true);
+        //view.ProdutoMenu telaProduto = new view.ProdutoMenu();
+        //telaProduto.setVisible(true);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     /**
