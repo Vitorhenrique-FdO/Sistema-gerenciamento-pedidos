@@ -370,7 +370,7 @@ public class ItemView extends javax.swing.JFrame {
         }
         lblValorTotal.setText(String.format("R$ %.2f", totalPedido));
     }
-    //GEN-LAST:event_btnLimparActionPerformed
+//GEN-LAST:event_btnLimparActionPerformed
 
     /**
      * @param args the command line arguments

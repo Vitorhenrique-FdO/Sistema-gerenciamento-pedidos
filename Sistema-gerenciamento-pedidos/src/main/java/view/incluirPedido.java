@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package view;
 
 
@@ -46,11 +42,11 @@ public class incluirPedido extends javax.swing.JFrame {
         model.Produto p = produtoCtrl.consultar(codProduto);
         if (p != null) {
             model.Item novoItem = new model.Item();
-            novoItem.setCodPedido(codPedidoVirtual);
-            novoItem.setSeqItem(itensVirtuais.size() + 1); // Sequencia gerada
-            novoItem.setCodProduto(codProduto);
+            novoItem.setCod_pedido(codPedidoVirtual);
+            novoItem.setSeq_item(itensVirtuais.size() + 1); // Sequencia gerada
+            novoItem.setCod_produto(codProduto);
             novoItem.setQtdeItens(qtde);
-            novoItem.setPrecoUnitario(p.getPreco());
+            novoItem.setPreco_uniItem(p.getPreco());
             itensVirtuais.add(novoItem);
             carregarItensNaTabela();
             atualizarTabelaPedido();
@@ -118,7 +114,7 @@ public class incluirPedido extends javax.swing.JFrame {
                 
                 // Refaz sequencial
                 for(int i=0; i<itensVirtuais.size(); i++){
-                    itensVirtuais.get(i).setSeqItem(i+1);
+                    itensVirtuais.get(i).setSeq_item(i+1);
                 }
                 
                 carregarItensNaTabela();
@@ -141,7 +137,7 @@ public class incluirPedido extends javax.swing.JFrame {
                         
                         // Não chamo carregarItensNaTabela() aqui dentro do listener senão dá loop/flicker.
                         // Atualizo só a linha visualmente e o total virtual.
-                        double p = itensVirtuais.get(row).getPrecoUnitario();
+                        double p = itensVirtuais.get(row).getPrecoUni();
                         jTableProdutos.setValueAt(String.format("R$ %.2f", p * novaQtde), row, 3);
                         atualizarTabelaPedido();
                     } catch (Exception ex) {}
@@ -165,7 +161,7 @@ public class incluirPedido extends javax.swing.JFrame {
         
         valorTotalVirtual = 0.0;
         for (model.Item it : itensVirtuais) {
-            valorTotalVirtual += (it.getQtdeItens() * it.getPrecoUnitario());
+            valorTotalVirtual += (it.getQtdeItens() * it.getPrecoUni());
         }
         
         java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
@@ -181,8 +177,8 @@ public class incluirPedido extends javax.swing.JFrame {
             modelo.addRow(new Object[]{
                 item.getCodProduto(),
                 item.getQtdeItens(),
-                String.format("R$ %.2f", item.getPrecoUnitario()),
-                String.format("R$ %.2f", item.getPrecoUnitario() * item.getQtdeItens())
+                String.format("R$ %.2f", item.getPrecoUni()),
+                String.format("R$ %.2f", item.getPrecoUni() * item.getQtdeItens())
             });
         }
     }
@@ -211,12 +207,13 @@ public class incluirPedido extends javax.swing.JFrame {
         jButtonExcluirItem = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTablePedido = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Liberation Sans", 0, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Novo Pedido");
 
@@ -233,9 +230,9 @@ public class incluirPedido extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel4.setText("Produtos atuais");
+        jLabel4.setText("Seu pedido");
 
-        jButtonSelecionarItem.setBackground(new java.awt.Color(102, 153, 255));
+        jButtonSelecionarItem.setBackground(new java.awt.Color(51, 255, 51));
         jButtonSelecionarItem.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonSelecionarItem.setForeground(new java.awt.Color(255, 255, 255));
         jButtonSelecionarItem.setText("SELECIONAR ITEM");
@@ -274,7 +271,7 @@ public class incluirPedido extends javax.swing.JFrame {
         });
         jScrollPane2.setViewportView(jTableProdutos);
 
-        jButtonExcluirItem.setBackground(new java.awt.Color(102, 153, 255));
+        jButtonExcluirItem.setBackground(new java.awt.Color(255, 0, 0));
         jButtonExcluirItem.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonExcluirItem.setForeground(new java.awt.Color(255, 255, 255));
         jButtonExcluirItem.setText("EXCLUIR ITEM");
@@ -302,16 +299,14 @@ public class incluirPedido extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTablePedido);
 
+        jLabel5.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel5.setText("Produtos atuais");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(222, 222, 222)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addGap(144, 144, 144))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -335,38 +330,49 @@ public class incluirPedido extends javax.swing.JFrame {
                         .addGap(39, 39, 39)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButtonSelecionarItem)
-                            .addComponent(jButtonExcluirItem))))
+                            .addComponent(jButtonExcluirItem)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(237, 237, 237)
+                        .addComponent(jLabel4))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(250, 250, 250)
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(222, 222, 222)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel1))
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextFieldCod_cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addGap(22, 22, 22)
                 .addComponent(jButtonBuscarProduto)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
+                        .addGap(3, 3, 3)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(41, 41, 41)
                         .addComponent(jButtonSelecionarItem)
                         .addGap(18, 18, 18)
                         .addComponent(jButtonExcluirItem)))
-                .addGap(60, 60, 60)
+                .addGap(26, 26, 26)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSalvarSair)
                     .addComponent(jButtonSair))
-                .addContainerGap(49, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -429,6 +435,7 @@ public class incluirPedido extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

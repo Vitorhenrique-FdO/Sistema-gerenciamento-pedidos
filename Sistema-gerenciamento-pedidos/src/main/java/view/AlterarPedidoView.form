@@ -115,7 +115,7 @@
                       <Component id="jButtonSalvar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jButtonSair" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="179" max="32767" attributes="0"/>
+                  <EmptySpace pref="49" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>

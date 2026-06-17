@@ -138,8 +138,8 @@ public class AlterarPedidoView extends javax.swing.JFrame {
                         it.getSeqItem(),
                         it.getCodProduto(),
                         it.getQtdeItens(),
-                        String.format("R$ %.2f", it.getPrecoUnitario()),
-                        String.format("R$ %.2f", it.getPrecoTotal())
+                        String.format("R$ %.2f", it.getPreco_uniItem()),
+                        String.format("R$ %.2f", it.getPreco_total()) 
                     });
                 }
             }
@@ -392,7 +392,7 @@ public class AlterarPedidoView extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSalvar)
                     .addComponent(jButtonSair))
-                .addContainerGap(179, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

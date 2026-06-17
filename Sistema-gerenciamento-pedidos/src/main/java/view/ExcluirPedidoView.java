@@ -318,8 +318,8 @@ public class ExcluirPedidoView extends javax.swing.JFrame {
                 it.getSeqItem(),
                 it.getCodProduto(),
                 it.getQtdeItens(),
-                String.format("R$ %.2f", it.getPrecoUnitario()),
-                String.format("R$ %.2f", it.getPrecoTotal())
+                String.format("R$ %.2f", it.getPreco_uniItem()),
+                String.format("R$ %.2f", it.getPreco_total()) 
             });
         }
     }//GEN-LAST:event_jButtonSelecionarPedidoActionPerformed

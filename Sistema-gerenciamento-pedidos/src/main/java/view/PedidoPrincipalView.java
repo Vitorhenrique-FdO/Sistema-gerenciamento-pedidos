@@ -62,38 +62,38 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jLabel1.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 153));
         jLabel1.setText("MENU PEDIDO");
 
-        jButtonNovoPedido.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonNovoPedido.setBackground(new java.awt.Color(102, 102, 102));
         jButtonNovoPedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jButtonNovoPedido.setForeground(new java.awt.Color(255, 255, 255));
         jButtonNovoPedido.setText("NOVO PEDIDO");
 
-        jButtonAlterar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonAlterar.setBackground(new java.awt.Color(102, 102, 102));
         jButtonAlterar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jButtonAlterar.setForeground(new java.awt.Color(255, 255, 255));
         jButtonAlterar.setText("ALTERAR");
 
-        jButtonListar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonListar.setBackground(new java.awt.Color(102, 102, 102));
         jButtonListar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jButtonListar.setForeground(new java.awt.Color(255, 255, 255));
         jButtonListar.setText("LISTAR");
 
-        jButtonConsultar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonConsultar.setBackground(new java.awt.Color(102, 102, 102));
         jButtonConsultar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jButtonConsultar.setForeground(new java.awt.Color(255, 255, 255));
         jButtonConsultar.setText("CONSULTAR");
 
-        jButtonExcluir1.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonExcluir1.setBackground(new java.awt.Color(102, 102, 102));
         jButtonExcluir1.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jButtonExcluir1.setForeground(new java.awt.Color(255, 255, 255));
         jButtonExcluir1.setText("EXCLUIR");
 
-        jButtonrRetornar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonrRetornar.setBackground(new java.awt.Color(255, 0, 0));
         jButtonrRetornar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jButtonrRetornar.setForeground(new java.awt.Color(255, 255, 255));
         jButtonrRetornar.setText("RETORNAR");
@@ -105,9 +105,6 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(170, 170, 170)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(43, 43, 43)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButtonListar)
@@ -118,7 +115,11 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(188, 188, 188)
                         .addComponent(jButtonrRetornar)))
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addContainerGap(219, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(165, 165, 165))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -127,15 +128,15 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
                 .addComponent(jButtonNovoPedido)
-                .addGap(39, 39, 39)
-                .addComponent(jButtonAlterar)
-                .addGap(42, 42, 42)
-                .addComponent(jButtonListar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(jButtonExcluir1)
                 .addGap(18, 18, 18)
-                .addComponent(jButtonConsultar)
+                .addComponent(jButtonAlterar)
+                .addGap(29, 29, 29)
+                .addComponent(jButtonListar)
                 .addGap(30, 30, 30)
+                .addComponent(jButtonExcluir1)
+                .addGap(30, 30, 30)
+                .addComponent(jButtonConsultar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
                 .addComponent(jButtonrRetornar)
                 .addGap(21, 21, 21))
         );
@@ -144,13 +145,13 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
