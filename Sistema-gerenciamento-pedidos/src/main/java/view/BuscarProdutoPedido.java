@@ -85,9 +85,9 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
         jButtonAdicionarProduto.setForeground(new java.awt.Color(0, 0, 0));
         jButtonAdicionarProduto.setText("Adicionar Produto");
 
-        jButtonBuscar_produto.setBackground(new java.awt.Color(0, 153, 255));
+        jButtonBuscar_produto.setBackground(new java.awt.Color(51, 255, 51));
         jButtonBuscar_produto.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButtonBuscar_produto.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonBuscar_produto.setForeground(new java.awt.Color(0, 0, 0));
         jButtonBuscar_produto.setText("BUSCAR");
         jButtonBuscar_produto.addActionListener(this::jButtonBuscar_produtoActionPerformed);
 
@@ -149,14 +149,6 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 83, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jTextFieldCod_produto, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButtonBuscar_produto)
-                .addGap(231, 231, 231))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -181,12 +173,20 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
                         .addGap(46, 46, 46)
                         .addComponent(jButtonSairSemSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(278, 278, 278)
-                        .addComponent(jButtonListarTodosProdutos))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(314, 314, 314)
                         .addComponent(jButtonSelecionarProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 83, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButtonListarTodosProdutos)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jTextFieldCod_produto, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonBuscar_produto)))
+                .addGap(231, 231, 231))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -198,9 +198,9 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jTextFieldCod_produto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButtonBuscar_produto))
-                .addGap(18, 18, 18)
-                .addComponent(jButtonListarTodosProdutos)
                 .addGap(29, 29, 29)
+                .addComponent(jButtonListarTodosProdutos)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
