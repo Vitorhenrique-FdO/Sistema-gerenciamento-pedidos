@@ -101,22 +101,22 @@ public class ConsultaPedido extends javax.swing.JFrame {
         jLabel2.setText("ESCOLHA SEU OBJETO DE CONSULTA");
 
         jButtonId_cliente.setBackground(new java.awt.Color(0, 204, 255));
-        jButtonId_cliente.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonId_cliente.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonId_cliente.setForeground(new java.awt.Color(0, 0, 0));
         jButtonId_cliente.setText("ID CLIENTE");
 
         jButtonCod_Pedido.setBackground(new java.awt.Color(0, 204, 255));
-        jButtonCod_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonCod_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonCod_Pedido.setForeground(new java.awt.Color(0, 0, 0));
         jButtonCod_Pedido.setText("CODIGO PEDIDO");
 
         jButtonData_Pedido.setBackground(new java.awt.Color(0, 204, 255));
-        jButtonData_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonData_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonData_Pedido.setForeground(new java.awt.Color(0, 0, 0));
         jButtonData_Pedido.setText("DATA PEDIDO");
 
         jButtonData_Entrega.setBackground(new java.awt.Color(0, 204, 255));
-        jButtonData_Entrega.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonData_Entrega.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonData_Entrega.setForeground(new java.awt.Color(0, 0, 0));
         jButtonData_Entrega.setText("DATA ENTREGA");
 
@@ -146,7 +146,7 @@ public class ConsultaPedido extends javax.swing.JFrame {
         jButtonSair.setText("SAIR");
 
         jButtonBuscar_Pedido.setBackground(new java.awt.Color(0, 204, 255));
-        jButtonBuscar_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonBuscar_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jButtonBuscar_Pedido.setForeground(new java.awt.Color(0, 0, 0));
         jButtonBuscar_Pedido.setText("BUSCAR");
 
@@ -154,49 +154,51 @@ public class ConsultaPedido extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonCod_Pedido)
+                            .addComponent(jButtonId_cliente, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(101, 101, 101)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jButtonData_Entrega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButtonData_Pedido, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(171, 171, 171))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(272, 272, 272))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(78, 78, 78)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel1)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButtonCod_Pedido)
-                                .addGap(66, 66, 66)
-                                .addComponent(jButtonData_Pedido))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(68, 68, 68)
-                                .addComponent(jLabel2))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(309, 309, 309)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextFieldObjeto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel3)
-                                        .addGap(13, 13, 13))))
+                                .addComponent(jLabel2)
+                                .addGap(65, 65, 65))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGap(108, 108, 108)
-                                .addComponent(jButtonId_cliente)
-                                .addGap(84, 84, 84)
-                                .addComponent(jButtonData_Entrega)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addContainerGap()
+                                .addComponent(jTextFieldObjeto, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(45, 45, 45)))
                         .addComponent(jButtonBuscar_Pedido, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(89, 89, 89)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(379, 379, 379)
-                        .addComponent(jButtonSair)))
+                        .addComponent(jButtonSair))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(282, 282, 282)
+                        .addComponent(jLabel1)))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(19, 19, 19)
                 .addComponent(jLabel1)
-                .addGap(28, 28, 28)
+                .addGap(27, 27, 27)
                 .addComponent(jLabel2)
                 .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -216,17 +218,16 @@ public class ConsultaPedido extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jButtonSair)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 12, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
