@@ -22,26 +22,26 @@ public class ConsultaPedido extends javax.swing.JFrame {
     }
     private void configurarBotoes() {
         // Botões de seleção de campo
-        jButton1.addActionListener(e -> { campoBusca = "id_cliente";  jLabel3.setText("Digite o ID do cliente:"); });
-        jButton2.addActionListener(e -> { campoBusca = "cod_pedido"; jLabel3.setText("Digite o código do pedido:"); });
-        jButton3.addActionListener(e -> { campoBusca = "dt_pedido";  jLabel3.setText("Digite a data (dd/MM/yyyy):"); });
-        jButton4.addActionListener(e -> { campoBusca = "dt_entrega"; jLabel3.setText("Digite a data de entrega (dd/MM/yyyy):"); });
-        jButton5.addActionListener(e -> { campoBusca = "vlr_total";  jLabel3.setText("Digite o valor total:"); });
+        jButtonId_cliente.addActionListener(e -> { campoBusca = "id_cliente";  jLabel3.setText("Digite o ID do cliente:"); });
+        jButtonCod_Pedido.addActionListener(e -> { campoBusca = "cod_pedido"; jLabel3.setText("Digite o código do pedido:"); });
+        jButtonData_Pedido.addActionListener(e -> { campoBusca = "dt_pedido";  jLabel3.setText("Digite a data (dd/MM/yyyy):"); });
+        jButtonData_Entrega.addActionListener(e -> { campoBusca = "dt_entrega"; jLabel3.setText("Digite a data de entrega (dd/MM/yyyy):"); });
 
-        // Campo de texto: busca ao pressionar Enter
-        jTextField1.addActionListener(e -> buscarPedidos());
+        // Botão e campo de texto de busca
+        jButtonBuscar_Pedido.addActionListener(e -> buscarPedidos());
+        jTextFieldObjeto.addActionListener(e -> buscarPedidos());
 
         // Botão Sair
-        jButton6.addActionListener(e -> {
+        jButtonSair.addActionListener(e -> {
             new view.PedidoPrincipalView().setVisible(true);
             this.dispose();
         });
     }
 
     private void buscarPedidos() {
-        String termo = jTextField1.getText().trim();
+        String termo = jTextFieldObjeto.getText().trim();
         javax.swing.table.DefaultTableModel modelo =
-            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            (javax.swing.table.DefaultTableModel) jTablePedido.getModel();
         modelo.setRowCount(0);
 
         java.util.List<model.Pedido> todos = pedidoCtrl.listar();
@@ -77,16 +77,16 @@ public class ConsultaPedido extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButtonId_cliente = new javax.swing.JButton();
+        jButtonCod_Pedido = new javax.swing.JButton();
+        jButtonData_Pedido = new javax.swing.JButton();
+        jButtonData_Entrega = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jTextFieldObjeto = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton6 = new javax.swing.JButton();
+        jTablePedido = new javax.swing.JTable();
+        jButtonSair = new javax.swing.JButton();
+        jButtonBuscar_Pedido = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -100,39 +100,34 @@ public class ConsultaPedido extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("ESCOLHA SEU OBJETO DE CONSULTA");
 
-        jButton1.setBackground(new java.awt.Color(0, 204, 255));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jButton1.setText("ID CLIENTE");
+        jButtonId_cliente.setBackground(new java.awt.Color(0, 204, 255));
+        jButtonId_cliente.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonId_cliente.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonId_cliente.setText("ID CLIENTE");
 
-        jButton2.setBackground(new java.awt.Color(0, 204, 255));
-        jButton2.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(0, 0, 0));
-        jButton2.setText("CODIGO PEDIDO");
+        jButtonCod_Pedido.setBackground(new java.awt.Color(0, 204, 255));
+        jButtonCod_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonCod_Pedido.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonCod_Pedido.setText("CODIGO PEDIDO");
 
-        jButton3.setBackground(new java.awt.Color(0, 204, 255));
-        jButton3.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(0, 0, 0));
-        jButton3.setText("DATA PEDIDO");
+        jButtonData_Pedido.setBackground(new java.awt.Color(0, 204, 255));
+        jButtonData_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonData_Pedido.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonData_Pedido.setText("DATA PEDIDO");
 
-        jButton4.setBackground(new java.awt.Color(0, 204, 255));
-        jButton4.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(0, 0, 0));
-        jButton4.setText("DATA ENTREGA");
-
-        jButton5.setBackground(new java.awt.Color(0, 204, 255));
-        jButton5.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(0, 0, 0));
-        jButton5.setText("VALOR TOTAL");
+        jButtonData_Entrega.setBackground(new java.awt.Color(0, 204, 255));
+        jButtonData_Entrega.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonData_Entrega.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonData_Entrega.setText("DATA ENTREGA");
 
         jLabel3.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("DIGITE SEU OBJETO");
 
-        jTextField1.setBackground(new java.awt.Color(153, 153, 153));
+        jTextFieldObjeto.setBackground(new java.awt.Color(153, 153, 153));
 
-        jTable1.setBackground(new java.awt.Color(204, 204, 204));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTablePedido.setBackground(new java.awt.Color(204, 204, 204));
+        jTablePedido.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -143,12 +138,17 @@ public class ConsultaPedido extends javax.swing.JFrame {
                 "COD PEDIDO", "ID CLIENTE", "DATA PEDIDO", "DATA ENTREGA", "VALOR"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(jTablePedido);
 
-        jButton6.setBackground(new java.awt.Color(255, 51, 51));
-        jButton6.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton6.setForeground(new java.awt.Color(0, 0, 0));
-        jButton6.setText("SAIR");
+        jButtonSair.setBackground(new java.awt.Color(255, 51, 51));
+        jButtonSair.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonSair.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonSair.setText("SAIR");
+
+        jButtonBuscar_Pedido.setBackground(new java.awt.Color(0, 204, 255));
+        jButtonBuscar_Pedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonBuscar_Pedido.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonBuscar_Pedido.setText("BUSCAR");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -161,38 +161,35 @@ public class ConsultaPedido extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel1)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton2)
+                                .addComponent(jButtonCod_Pedido)
                                 .addGap(66, 66, 66)
-                                .addComponent(jButton3)))
-                        .addGap(35, 35, 35)
-                        .addComponent(jButton5))
+                                .addComponent(jButtonData_Pedido))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(68, 68, 68)
-                                    .addComponent(jLabel2))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(309, 309, 309)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                            .addComponent(jLabel3)
-                                            .addGap(13, 13, 13))))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addGap(108, 108, 108)
-                                    .addComponent(jButton1)
-                                    .addGap(84, 84, 84)
-                                    .addComponent(jButton4)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(89, 89, 89)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(379, 379, 379)
-                .addComponent(jButton6)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(68, 68, 68)
+                                .addComponent(jLabel2))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(309, 309, 309)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextFieldObjeto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 267, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(13, 13, 13))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(108, 108, 108)
+                                .addComponent(jButtonId_cliente)
+                                .addGap(84, 84, 84)
+                                .addComponent(jButtonData_Entrega)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jButtonBuscar_Pedido, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(89, 89, 89)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(379, 379, 379)
+                        .addComponent(jButtonSair)))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,21 +200,22 @@ public class ConsultaPedido extends javax.swing.JFrame {
                 .addComponent(jLabel2)
                 .addGap(34, 34, 34)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton5)
-                    .addComponent(jButton2))
+                    .addComponent(jButtonData_Pedido)
+                    .addComponent(jButtonCod_Pedido))
                 .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton4)
-                    .addComponent(jButton1))
+                    .addComponent(jButtonData_Entrega)
+                    .addComponent(jButtonId_cliente))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldObjeto, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonBuscar_Pedido))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton6)
+                .addComponent(jButtonSair)
                 .addContainerGap(34, Short.MAX_VALUE))
         );
 
@@ -225,13 +223,14 @@ public class ConsultaPedido extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -265,18 +264,18 @@ public class ConsultaPedido extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButtonBuscar_Pedido;
+    private javax.swing.JButton jButtonCod_Pedido;
+    private javax.swing.JButton jButtonData_Entrega;
+    private javax.swing.JButton jButtonData_Pedido;
+    private javax.swing.JButton jButtonId_cliente;
+    private javax.swing.JButton jButtonSair;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable jTablePedido;
+    private javax.swing.JTextField jTextFieldObjeto;
     // End of variables declaration//GEN-END:variables
 }

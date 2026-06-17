@@ -10,8 +10,18 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
     
     public PedidoPrincipalView() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        configurarBotoes();
     }
 
+    private void configurarBotoes() {
+        jButtonNovoPedido.addActionListener(e -> { new incluirPedido().setVisible(true); this.dispose(); });
+        jButtonAlterar.addActionListener(e -> { new AlterarPedidoView().setVisible(true); this.dispose(); });
+        jButtonListar.addActionListener(e -> { new ListarPedido().setVisible(true); this.dispose(); });
+        jButtonConsultar.addActionListener(e -> { new ConsultaPedido().setVisible(true); this.dispose(); });
+        jButtonExcluir1.addActionListener(e -> { new ExcluirPedidoView().setVisible(true); this.dispose(); });
+        jButtonrRetornar.addActionListener(e -> { this.dispose(); }); // Sai do menu de pedidos
+    }
     private void btnNovoPedidoActionPerformed(java.awt.event.ActionEvent evt) {
         new incluirPedido().setVisible(true);
         this.dispose();
@@ -43,10 +53,12 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButtonNovoPedido = new javax.swing.JButton();
+        jButtonAlterar = new javax.swing.JButton();
+        jButtonListar = new javax.swing.JButton();
+        jButtonConsultar = new javax.swing.JButton();
+        jButtonExcluir1 = new javax.swing.JButton();
+        jButtonrRetornar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -56,25 +68,35 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 0, 153));
         jLabel1.setText("MENU PEDIDO");
 
-        jButton1.setBackground(new java.awt.Color(0, 0, 153));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("NOVO PEDIDO");
+        jButtonNovoPedido.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonNovoPedido.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonNovoPedido.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonNovoPedido.setText("NOVO PEDIDO");
 
-        jButton3.setBackground(new java.awt.Color(0, 0, 153));
-        jButton3.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("ALTERAR");
+        jButtonAlterar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonAlterar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonAlterar.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonAlterar.setText("ALTERAR");
 
-        jButton4.setBackground(new java.awt.Color(0, 0, 153));
-        jButton4.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("CONSULTAR");
+        jButtonListar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonListar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonListar.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonListar.setText("LISTAR");
 
-        jButton5.setBackground(new java.awt.Color(0, 0, 153));
-        jButton5.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("EXCLUIR");
+        jButtonConsultar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonConsultar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonConsultar.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonConsultar.setText("CONSULTAR");
+
+        jButtonExcluir1.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonExcluir1.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonExcluir1.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonExcluir1.setText("EXCLUIR");
+
+        jButtonrRetornar.setBackground(new java.awt.Color(0, 0, 153));
+        jButtonrRetornar.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonrRetornar.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonrRetornar.setText("RETORNAR");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -88,10 +110,14 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(43, 43, 43)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton4)
-                            .addComponent(jButton1)
-                            .addComponent(jButton3)
-                            .addComponent(jButton5))))
+                            .addComponent(jButtonListar)
+                            .addComponent(jButtonNovoPedido)
+                            .addComponent(jButtonAlterar)
+                            .addComponent(jButtonConsultar)
+                            .addComponent(jButtonExcluir1)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(188, 188, 188)
+                        .addComponent(jButtonrRetornar)))
                 .addContainerGap(184, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -100,14 +126,18 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
-                .addComponent(jButton1)
+                .addComponent(jButtonNovoPedido)
                 .addGap(39, 39, 39)
-                .addComponent(jButton3)
+                .addComponent(jButtonAlterar)
                 .addGap(42, 42, 42)
-                .addComponent(jButton4)
-                .addGap(46, 46, 46)
-                .addComponent(jButton5)
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addComponent(jButtonListar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addComponent(jButtonExcluir1)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonConsultar)
+                .addGap(30, 30, 30)
+                .addComponent(jButtonrRetornar)
+                .addGap(21, 21, 21))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -154,10 +184,12 @@ public class PedidoPrincipalView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButtonAlterar;
+    private javax.swing.JButton jButtonConsultar;
+    private javax.swing.JButton jButtonExcluir1;
+    private javax.swing.JButton jButtonListar;
+    private javax.swing.JButton jButtonNovoPedido;
+    private javax.swing.JButton jButtonrRetornar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables

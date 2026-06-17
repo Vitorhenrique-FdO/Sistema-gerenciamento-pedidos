@@ -11,20 +11,30 @@ public class ListarPedido extends javax.swing.JFrame {
 
     private final Controller.PedidoController pedidoCtrl = new Controller.PedidoController();
 
-   
     public ListarPedido() {
         initComponents();
         this.setLocationRelativeTo(null);
-        // Conecta o botão Listar
-        jButton1.addActionListener(e -> carregarPedidos());
-        // Carrega automaticamente ao abrir
+        // Conecta o botão Sair
+        jButtonSair.addActionListener(e -> {
+            new view.PedidoPrincipalView().setVisible(true);
+            this.dispose();
+        });
+        
+        // Listener de seleção na tabela Pedido para carregar itens automaticamente
+        jTable1.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting() && jTable1.getSelectedRow() != -1) {
+                int codPedido = Integer.parseInt(jTable1.getValueAt(jTable1.getSelectedRow(), 0).toString());
+                carregarItensDoPedido(codPedido);
+            }
+        });
+
+        // Carrega todos os pedidos automaticamente ao abrir
         carregarPedidos();
     }
 
     //Carrega todos os pedidos na tabela. 
     private void carregarPedidos() {
-        javax.swing.table.DefaultTableModel modelo =
-            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
         modelo.setRowCount(0);
         for (model.Pedido p : pedidoCtrl.listar()) {
             modelo.addRow(new Object[]{
@@ -37,6 +47,48 @@ public class ListarPedido extends javax.swing.JFrame {
         }
     }
 
+    private void buscarEspecifo() {
+        String codStr = jTextFieldCod_pedido.getText().trim();
+        if (codStr.isEmpty()) {
+            carregarPedidos(); // Volta a mostrar todos
+            ((javax.swing.table.DefaultTableModel) jTableListarItem.getModel()).setRowCount(0);
+            return;
+        }
+        try {
+            int cod = Integer.parseInt(codStr);
+            model.Pedido p = pedidoCtrl.consultar(cod);
+            javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+            modelo.setRowCount(0);
+            
+            if (p == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Pedido " + cod + " não encontrado.");
+                ((javax.swing.table.DefaultTableModel) jTableListarItem.getModel()).setRowCount(0);
+            } else {
+                modelo.addRow(new Object[]{
+                    p.getCodPedido(), p.getIdCliente(), p.getDtPedido(), p.getDtEntrega(), String.format("R$ %.2f", p.getVlrTotal())
+                });
+                jTable1.setRowSelectionInterval(0, 0); // Seleciona a linha, que já dispara o ListSelectionListener
+            }
+        } catch (NumberFormatException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Código inválido.");
+        }
+    }
+
+    private void carregarItensDoPedido(int codPedido) {
+        javax.swing.table.DefaultTableModel modeloItem = (javax.swing.table.DefaultTableModel) jTableListarItem.getModel();
+        modeloItem.setRowCount(0);
+        Controller.ItemController itemCtrl = new Controller.ItemController();
+        for (model.Item it : itemCtrl.listarPorPedido(codPedido)) {
+            modeloItem.addRow(new Object[]{
+                it.getCodPedido(),
+                it.getSeqItem(),
+                it.getCodProduto(),
+                it.getQtdeItens(),
+                String.format("R$ %.2f", it.getPrecoUnitario()),
+                String.format("R$ %.2f", it.getPrecoTotal())
+            });
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -49,9 +101,16 @@ public class ListarPedido extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jButtonBuscar_pedido = new javax.swing.JButton();
+        jButtonConsultarPedido = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jTextFieldCod_pedido = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTableListarItem = new javax.swing.JTable();
+        jButtonSair = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,11 +119,6 @@ public class ListarPedido extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Liberation Sans", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Listar Pedidos");
-
-        jButton1.setBackground(new java.awt.Color(51, 153, 255));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jButton1.setText("Listar");
 
         jTable1.setBackground(new java.awt.Color(204, 204, 204));
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -88,6 +142,56 @@ public class ListarPedido extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        jButtonBuscar_pedido.setBackground(new java.awt.Color(0, 153, 255));
+        jButtonBuscar_pedido.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonBuscar_pedido.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonBuscar_pedido.setText("BUSCAR");
+        jButtonBuscar_pedido.addActionListener(this::jButtonBuscar_pedidoActionPerformed);
+
+        jButtonConsultarPedido.setBackground(new java.awt.Color(0, 153, 255));
+        jButtonConsultarPedido.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonConsultarPedido.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonConsultarPedido.setText("CONSULTAR");
+        jButtonConsultarPedido.addActionListener(this::jButtonConsultarPedidoActionPerformed);
+
+        jLabel2.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 153));
+        jLabel2.setText("CODIDO PEDIDO");
+
+        jTextFieldCod_pedido.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldCod_pedido.addActionListener(this::jTextFieldCod_pedidoActionPerformed);
+
+        jLabel4.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 153));
+        jLabel4.setText("TABELA ITENS DESSE PEDIDO");
+
+        jTableListarItem.setBackground(new java.awt.Color(204, 204, 204));
+        jTableListarItem.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Codigo Pedido", "ID Cliente", "Data Pedido", "Data Entrega", "Valor Total"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false, true, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(jTableListarItem);
+
+        jButtonSair.setBackground(new java.awt.Color(255, 51, 51));
+        jButtonSair.setFont(new java.awt.Font("Liberation Sans", 1, 24)); // NOI18N
+        jButtonSair.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonSair.setText("SAIR");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -95,15 +199,34 @@ public class ListarPedido extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(338, 338, 338)
-                        .addComponent(jButton1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(273, 273, 273)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(51, Short.MAX_VALUE))
+                        .addComponent(jLabel1)
+                        .addGap(0, 290, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 734, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextFieldCod_pedido, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButtonBuscar_pedido)
+                                .addGap(38, 38, 38)
+                                .addComponent(jButtonConsultarPedido)))))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 740, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(33, 33, 33))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(238, 238, 238)
+                .addComponent(jLabel4)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonSair)
+                .addGap(357, 357, 357))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -111,10 +234,20 @@ public class ListarPedido extends javax.swing.JFrame {
                 .addContainerGap(16, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jTextFieldCod_pedido, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonBuscar_pedido)
+                    .addComponent(jButtonConsultarPedido))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(jButtonSair)
+                .addGap(32, 32, 32))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -124,18 +257,31 @@ public class ListarPedido extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(294, Short.MAX_VALUE))
+                .addContainerGap(288, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonBuscar_pedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscar_pedidoActionPerformed
+        buscarEspecifo();
+    }//GEN-LAST:event_jButtonBuscar_pedidoActionPerformed
+
+    private void jButtonConsultarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConsultarPedidoActionPerformed
+        new view.ConsultaPedido().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButtonConsultarPedidoActionPerformed
+
+    private void jTextFieldCod_pedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldCod_pedidoActionPerformed
+        buscarEspecifo();
+    }//GEN-LAST:event_jTextFieldCod_pedidoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -163,10 +309,17 @@ public class ListarPedido extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonBuscar_pedido;
+    private javax.swing.JButton jButtonConsultarPedido;
+    private javax.swing.JButton jButtonSair;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableListarItem;
+    private javax.swing.JTextField jTextFieldCod_pedido;
     // End of variables declaration//GEN-END:variables
 }

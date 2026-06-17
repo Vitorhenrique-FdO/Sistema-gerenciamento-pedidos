@@ -8,10 +8,20 @@ package view;
 public class BuscarProdutoPedido extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BuscarProdutoPedido.class.getName());
-
+    private Controller.ProdutoController produtoCtrl = new Controller.ProdutoController();
+    private incluirPedido parentView = null;
+    
+    public BuscarProdutoPedido(incluirPedido parent) {
+        this.parentView = parent;
+        initComponents();
+        this.setLocationRelativeTo(null);
+        configurarBotoes();
+    }
     
     public BuscarProdutoPedido() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        configurarBotoes();
     }
 
     /**
@@ -25,17 +35,19 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jButtonSelecionarProduto = new javax.swing.JButton();
+        jButtonSairSemSalvar = new javax.swing.JButton();
+        jButtonRetorneSalvo = new javax.swing.JButton();
+        jButtonAdicionarProduto = new javax.swing.JButton();
+        jButtonBuscar_produto = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        jTextFieldCod_produto = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jTableProduto = new javax.swing.JTable();
+        jTextFieldQtde_Produtos = new javax.swing.JTextField();
+        jButtonListarTodosProdutos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -45,10 +57,6 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
         jLabel1.setText("Buscar Produto");
 
-        jLabel2.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel2.setText("Codigo do produto: ");
-
         jLabel3.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 0, 0));
         jLabel3.setText("Tabela produtos");
@@ -57,18 +65,63 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(0, 0, 0));
         jLabel4.setText("Quantidade desejada: ");
 
-        jTable1.setAutoCreateRowSorter(true);
-        jTable1.setBackground(new java.awt.Color(204, 204, 204));
-        jTable1.setForeground(new java.awt.Color(0, 0, 0));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jButtonSelecionarProduto.setBackground(new java.awt.Color(51, 255, 255));
+        jButtonSelecionarProduto.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonSelecionarProduto.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonSelecionarProduto.setText("Selecionar");
+
+        jButtonSairSemSalvar.setBackground(new java.awt.Color(255, 51, 51));
+        jButtonSairSemSalvar.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonSairSemSalvar.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonSairSemSalvar.setText("Retorne sem salvar ");
+
+        jButtonRetorneSalvo.setBackground(new java.awt.Color(51, 255, 51));
+        jButtonRetorneSalvo.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonRetorneSalvo.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonRetorneSalvo.setText("Retornar");
+
+        jButtonAdicionarProduto.setBackground(new java.awt.Color(51, 204, 255));
+        jButtonAdicionarProduto.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonAdicionarProduto.setForeground(new java.awt.Color(0, 0, 0));
+        jButtonAdicionarProduto.setText("Adicionar Produto");
+
+        jButtonBuscar_produto.setBackground(new java.awt.Color(0, 153, 255));
+        jButtonBuscar_produto.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonBuscar_produto.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonBuscar_produto.setText("BUSCAR");
+        jButtonBuscar_produto.addActionListener(this::jButtonBuscar_produtoActionPerformed);
+
+        jLabel2.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(0, 0, 153));
+        jLabel2.setText("CODIDO PRODUTO");
+
+        jTextFieldCod_produto.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldCod_produto.addActionListener(this::jTextFieldCod_produtoActionPerformed);
+
+        jTableProduto.setBackground(new java.awt.Color(204, 204, 204));
+        jTableProduto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jTableProduto.setForeground(new java.awt.Color(102, 102, 102));
+        jTableProduto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null}
             },
             new String [] {
-                "Nome", "Codigo", "Preco", "Qtd disponivel"
+                "Código", "Nome", "Preço", "Estoque"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -79,42 +132,31 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setGridColor(new java.awt.Color(204, 204, 204));
-        jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(jTable1);
+        jTableProduto.setGridColor(new java.awt.Color(0, 0, 0));
+        jTableProduto.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        jScrollPane1.setViewportView(jTableProduto);
 
-        jTextField1.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldQtde_Produtos.setBackground(new java.awt.Color(204, 204, 204));
+        jTextFieldQtde_Produtos.addActionListener(this::jTextFieldQtde_ProdutosActionPerformed);
 
-        jButton1.setBackground(new java.awt.Color(51, 255, 51));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jButton1.setText("Buscar");
-
-        jButton2.setBackground(new java.awt.Color(51, 255, 255));
-        jButton2.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(0, 0, 0));
-        jButton2.setText("Selecionar");
-
-        jButton3.setBackground(new java.awt.Color(255, 51, 51));
-        jButton3.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(0, 0, 0));
-        jButton3.setText("Retorne sem salvar ");
-
-        jButton4.setBackground(new java.awt.Color(51, 255, 51));
-        jButton4.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(0, 0, 0));
-        jButton4.setText("Salvar");
-
-        jButton5.setBackground(new java.awt.Color(51, 204, 255));
-        jButton5.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(0, 0, 0));
-        jButton5.setText("Adicionar outro");
+        jButtonListarTodosProdutos.setBackground(new java.awt.Color(0, 153, 255));
+        jButtonListarTodosProdutos.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonListarTodosProdutos.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonListarTodosProdutos.setText("LISTAR TODOS  PRODUTOS");
+        jButtonListarTodosProdutos.addActionListener(this::jButtonListarTodosProdutosActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 83, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(jTextFieldCod_produto, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonBuscar_produto)
+                .addGap(231, 231, 231))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -122,55 +164,58 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
                         .addComponent(jLabel1))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(52, 52, 52)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 721, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(98, 98, 98)
-                        .addComponent(jLabel2)
+                        .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jTextFieldQtde_Produtos, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(146, 146, 146)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
+                        .addGap(323, 323, 323)
                         .addComponent(jLabel3))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(98, 98, 98)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(110, Short.MAX_VALUE))
+                        .addGap(126, 126, 126)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 525, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(81, 81, 81)
+                        .addComponent(jButtonAdicionarProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(jButtonRetorneSalvo, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(46, 46, 46)
+                        .addComponent(jButtonSairSemSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(278, 278, 278)
+                        .addComponent(jButtonListarTodosProdutos))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(314, 314, 314)
+                        .addComponent(jButtonSelecionarProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addComponent(jLabel1)
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jButton1))
-                    .addComponent(jLabel2))
-                .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jButton2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addGap(27, 27, 27)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4)
-                    .addComponent(jButton5))
-                .addContainerGap(63, Short.MAX_VALUE))
+                    .addComponent(jLabel2)
+                    .addComponent(jTextFieldCod_produto, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonBuscar_produto))
+                .addGap(18, 18, 18)
+                .addComponent(jButtonListarTodosProdutos)
+                .addGap(29, 29, 29)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonSelecionarProduto)
+                .addGap(21, 21, 21)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(jTextFieldQtde_Produtos, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonRetorneSalvo)
+                    .addComponent(jButtonAdicionarProduto)
+                    .addComponent(jButtonSairSemSalvar))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -186,6 +231,73 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void configurarBotoes() {
+        jButtonSairSemSalvar.addActionListener(e -> this.dispose());
+        jButtonRetorneSalvo.addActionListener(e -> this.dispose());
+        
+        jButtonListarTodosProdutos.addActionListener(e -> {
+            javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTableProduto.getModel();
+            modelo.setRowCount(0);
+            for (model.Produto p : produtoCtrl.listar()) {
+                modelo.addRow(new Object[]{p.getCodProduto(), p.getNome(), String.format("R$ %.2f", p.getPreco()), p.getQtdeProduto()});
+            }
+        });
+
+        jButtonBuscar_produto.addActionListener(e -> {
+            String codStr = jTextFieldCod_produto.getText().trim();
+            if(codStr.isEmpty()) return;
+            try {
+                int cod = Integer.parseInt(codStr);
+                model.Produto p = produtoCtrl.consultar(cod);
+                javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTableProduto.getModel();
+                modelo.setRowCount(0);
+                if (p != null) {
+                    modelo.addRow(new Object[]{p.getCodProduto(), p.getNome(), String.format("R$ %.2f", p.getPreco()), p.getQtdeProduto()});
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Produto não encontrado.");
+                }
+            } catch(Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Código inválido.");
+            }
+        });
+
+        jButtonAdicionarProduto.addActionListener(e -> {
+            int row = jTableProduto.getSelectedRow();
+            if (row == -1) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Selecione um produto na tabela.");
+                return;
+            }
+            try {
+                int cod = Integer.parseInt(jTableProduto.getValueAt(row, 0).toString());
+                int qtde = Integer.parseInt(jTextFieldQtde_Produtos.getText().trim());
+                if (qtde <= 0) throw new NumberFormatException();
+                
+                if (parentView != null) {
+                    parentView.adicionarProdutoVirtual(cod, qtde);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Produto adicionado ao pedido!");
+                    this.dispose();
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Erro: parentView nulo.");
+                }
+            } catch(Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Digite uma quantidade válida.");
+            }
+        });
+        
+        jButtonSelecionarProduto.addActionListener(e -> {
+            int row = jTableProduto.getSelectedRow();
+            if (row != -1) {
+                jTextFieldCod_produto.setText(jTableProduto.getValueAt(row, 0).toString());
+                jTextFieldQtde_Produtos.requestFocus();
+            }
+        });
+    }
+
+    private void jButtonBuscar_produtoActionPerformed(java.awt.event.ActionEvent evt) {}
+    private void jTextFieldCod_produtoActionPerformed(java.awt.event.ActionEvent evt) {}
+    private void jTextFieldQtde_ProdutosActionPerformed(java.awt.event.ActionEvent evt) {}
+    private void jButtonListarTodosProdutosActionPerformed(java.awt.event.ActionEvent evt) {}
 
     /**
      * @param args the command line arguments
@@ -213,18 +325,20 @@ public class BuscarProdutoPedido extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButtonAdicionarProduto;
+    private javax.swing.JButton jButtonBuscar_produto;
+    private javax.swing.JButton jButtonListarTodosProdutos;
+    private javax.swing.JButton jButtonRetorneSalvo;
+    private javax.swing.JButton jButtonSairSemSalvar;
+    private javax.swing.JButton jButtonSelecionarProduto;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable jTableProduto;
+    private javax.swing.JTextField jTextFieldCod_produto;
+    private javax.swing.JTextField jTextFieldQtde_Produtos;
     // End of variables declaration//GEN-END:variables
 }

@@ -18,116 +18,173 @@ public class incluirPedido extends javax.swing.JFrame {
     private final Controller.ItemController    itemCtrl    = new Controller.ItemController();
     private final Controller.ProdutoController produtoCtrl = new Controller.ProdutoController();
 
-    //Código do pedido em aberto durante esta sessão de inclusão
-    private int codPedidoAtual = 0;
+    // Memória local do pedido antes de salvar
+    private int clienteSelecionado = -1;
+    private int codPedidoVirtual = 0; // Gerado apenas para visualização
+    private java.util.List<model.Item> itensVirtuais = new java.util.ArrayList<>();
+    private double valorTotalVirtual = 0.0;
 
     /**
      * Cria novo formulário incluirPedido.
-     * Ao abrir, solicita o id do cliente e cria o pedido automaticamente
      */
     public incluirPedido() {
         initComponents();
         this.setLocationRelativeTo(null);
-        inicializarPedido();
         configurarBotoes();
-    }
-
-    // Solicita o id do cliente, cria o pedido e inicializa a tela.
-     
-    private void inicializarPedido() {
-        String idClienteStr = javax.swing.JOptionPane.showInputDialog(this, "Informe o ID do cliente:");
-        if (idClienteStr == null || idClienteStr.trim().isEmpty()) {
-            // Usuário cancelou — volta para o menu
-            this.dispose();
-            return;
+        
+        // Simula qual será o próximo código de pedido (apenas visual)
+        java.util.List<model.Pedido> todos = pedidoCtrl.listar();
+        if (!todos.isEmpty()) {
+            codPedidoVirtual = todos.get(todos.size() - 1).getCodPedido() + 1;
+        } else {
+            codPedidoVirtual = 1;
         }
-        try {
-            int idCliente = Integer.parseInt(idClienteStr.trim());
-            // Data de entrega pode ser informada depois na tela de alterar
-            String erro = pedidoCtrl.incluir(idCliente, "");
-            if (!erro.isEmpty()) {
-                javax.swing.JOptionPane.showMessageDialog(this, erro, "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
-                this.dispose();
-                return;
-            }
-            // O pedido foi criado; pega o código gerado
-            java.util.List<model.Pedido> todos = pedidoCtrl.listar();
-            codPedidoAtual = todos.get(todos.size() - 1).getCodPedido();
-            jTextField1.setText(String.valueOf(idCliente));
-            // Mostra a data do pedido
-            jTextField2.setText(todos.get(todos.size() - 1).getDtPedido());
-        } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "ID de cliente inválido.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
-            this.dispose();
+    }
+    
+    // Método público para a tela BuscarProdutoPedido chamar e injetar o produto
+    public void adicionarProdutoVirtual(int codProduto, int qtde) {
+        model.Produto p = produtoCtrl.consultar(codProduto);
+        if (p != null) {
+            model.Item novoItem = new model.Item();
+            novoItem.setCodPedido(codPedidoVirtual);
+            novoItem.setSeqItem(itensVirtuais.size() + 1); // Sequencia gerada
+            novoItem.setCodProduto(codProduto);
+            novoItem.setQtdeItens(qtde);
+            novoItem.setPrecoUnitario(p.getPreco());
+            itensVirtuais.add(novoItem);
+            carregarItensNaTabela();
+            atualizarTabelaPedido();
         }
     }
 
     //Configura os action listeners dos botões que não foram definidos no form editor.
      
     private void configurarBotoes() {
-        // jButton2 = Buscar produto
-        jButton2.addActionListener(e -> {
-            String codStr = javax.swing.JOptionPane.showInputDialog(this, "Informe o código do produto:");
-            if (codStr == null || codStr.trim().isEmpty()) return;
+        // Ao pressionar Enter no Cod Cliente, atualiza a tabela pedido
+        jTextFieldCod_cliente.addActionListener(e -> {
             try {
-                int cod = Integer.parseInt(codStr.trim());
-                model.Produto p = produtoCtrl.consultar(cod);
-                if (p == null) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Produto não encontrado.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                String qtdeStr = javax.swing.JOptionPane.showInputDialog(this, "Quantidade de \"" + p.getNome() + "\" (estoque: " + p.getQtdeProduto() + "):");
-                if (qtdeStr == null || qtdeStr.trim().isEmpty()) return;
-                int qtde = Integer.parseInt(qtdeStr.trim());
-                String erro = itemCtrl.incluir(codPedidoAtual, cod, qtde);
-                if (erro.isEmpty()) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Produto adicionado!");
-                    carregarItensNaTabela();
-                } else {
-                    javax.swing.JOptionPane.showMessageDialog(this, erro, "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (NumberFormatException ex) {
-                javax.swing.JOptionPane.showMessageDialog(this, "Código/quantidade inválido.", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
+                clienteSelecionado = Integer.parseInt(jTextFieldCod_cliente.getText().trim());
+                atualizarTabelaPedido();
+                javax.swing.JOptionPane.showMessageDialog(this, "Cliente " + clienteSelecionado + " vinculado provisoriamente!");
+            } catch(Exception ex){
+                javax.swing.JOptionPane.showMessageDialog(this, "ID inválido.");
             }
         });
 
-        // jButton3 = Calcular valor total
-        jButton3.addActionListener(e -> {
-            model.Pedido pedido = pedidoCtrl.consultar(codPedidoAtual);
-            if (pedido != null) {
-                jLabel6.setText("Valor Total = R$ " + String.format("%.2f", pedido.getVlrTotal()));
-            }
+        // Abrir janela de busca de produto (passando esta view como pai)
+        jButtonBuscarProduto.addActionListener(e -> {
+            new BuscarProdutoPedido(this).setVisible(true);
         });
 
-        // jButton5 = Confirmar
-        jButton5.addActionListener(e -> {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Pedido " + codPedidoAtual + " salvo com sucesso!\nValor total será calculado automaticamente.");
+        // Salvar e Sair (Efetiva no Banco)
+        jButtonSalvarSair.addActionListener(e -> {
+            if (clienteSelecionado == -1) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Defina o cliente primeiro (Digite e dê Enter).");
+                return;
+            }
+            if (itensVirtuais.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Adicione ao menos um produto.");
+                return;
+            }
+            // 1. Incluir pedido
+            String erro = pedidoCtrl.incluir(clienteSelecionado, "");
+            if (!erro.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, erro); return;
+            }
+            // Pega o código real gerado
+            java.util.List<model.Pedido> todos = pedidoCtrl.listar();
+            int codReal = todos.get(todos.size() - 1).getCodPedido();
+            
+            // 2. Incluir itens
+            for (model.Item it : itensVirtuais) {
+                itemCtrl.incluir(codReal, it.getCodProduto(), it.getQtdeItens());
+            }
+            
+            javax.swing.JOptionPane.showMessageDialog(this, "Pedido salvo com sucesso!");
             new view.PedidoPrincipalView().setVisible(true);
             this.dispose();
         });
+
+        jButtonSair.addActionListener(e -> {
+            new view.PedidoPrincipalView().setVisible(true);
+            this.dispose();
+        });
+
+        // Excluir Item selecionado na Tabela
+        jButtonExcluirItem.addActionListener(e -> {
+            int row = jTableProdutos.getSelectedRow();
+            if (row != -1) {
+                itensVirtuais.remove(row); // Remove da memória
+                
+                // Refaz sequencial
+                for(int i=0; i<itensVirtuais.size(); i++){
+                    itensVirtuais.get(i).setSeqItem(i+1);
+                }
+                
+                carregarItensNaTabela();
+                atualizarTabelaPedido();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Selecione um item na tabela de produtos.");
+            }
+        });
+        
+        // Listener para mudança de quantidade (update dinâmico da tabela)
+        jTableProdutos.getModel().addTableModelListener(e -> {
+            if (e.getType() == javax.swing.event.TableModelEvent.UPDATE) {
+                int col = e.getColumn();
+                int row = e.getFirstRow();
+                // Coluna 1 = Quantidade
+                if (col == 1 && row >= 0 && row < itensVirtuais.size()) {
+                    try {
+                        int novaQtde = Integer.parseInt(jTableProdutos.getValueAt(row, 1).toString());
+                        itensVirtuais.get(row).setQtdeItens(novaQtde);
+                        
+                        // Não chamo carregarItensNaTabela() aqui dentro do listener senão dá loop/flicker.
+                        // Atualizo só a linha visualmente e o total virtual.
+                        double p = itensVirtuais.get(row).getPrecoUnitario();
+                        jTableProdutos.setValueAt(String.format("R$ %.2f", p * novaQtde), row, 3);
+                        atualizarTabelaPedido();
+                    } catch (Exception ex) {}
+                }
+            }
+        });
+        
+        // Atalho DEL na tabela
+        jTableProdutos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_DELETE) {
+                    jButtonExcluirItem.doClick();
+                }
+            }
+        });
     }
 
-    // Carrega os itens do pedido atual na tabela.
-     
-    private void carregarItensNaTabela() {
-        javax.swing.table.DefaultTableModel modelo =
-            (javax.swing.table.DefaultTableModel) jTable1.getModel();
+    private void atualizarTabelaPedido() {
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTablePedido.getModel();
         modelo.setRowCount(0);
-        java.util.List<model.Item> itens = itemCtrl.listarPorPedido(codPedidoAtual);
-        double total = 0.0;
-        for (model.Item item : itens) {
-            model.Produto p = produtoCtrl.consultar(item.getCodProduto());
-            String nome = (p != null) ? p.getNome() : "?";
-            modelo.addRow(new Object[]{
-                nome,
-                item.getSeqItem(),
-                String.format("R$ %.2f", item.getPrecoUni()),
-                item.getQtdeItens()
-            });
-            total += item.getPrecoTotal();
+        
+        valorTotalVirtual = 0.0;
+        for (model.Item it : itensVirtuais) {
+            valorTotalVirtual += (it.getQtdeItens() * it.getPrecoUnitario());
         }
-        jLabel6.setText("Valor Total = R$ " + String.format("%.2f", total));
+        
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        String hj = sdf.format(new java.util.Date());
+        
+        modelo.addRow(new Object[]{hj, "", String.format("R$ %.2f", valorTotalVirtual)});
+    }
+
+    private void carregarItensNaTabela() {
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTableProdutos.getModel();
+        modelo.setRowCount(0);
+        for (model.Item item : itensVirtuais) {
+            modelo.addRow(new Object[]{
+                item.getCodProduto(),
+                item.getQtdeItens(),
+                String.format("R$ %.2f", item.getPrecoUnitario()),
+                String.format("R$ %.2f", item.getPrecoUnitario() * item.getQtdeItens())
+            });
+        }
     }
 
 
@@ -143,19 +200,17 @@ public class incluirPedido extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTextFieldCod_cliente = new javax.swing.JTextField();
+        jButtonBuscarProduto = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jButton4 = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButtonSelecionarItem = new javax.swing.JButton();
+        jButtonSair = new javax.swing.JButton();
+        jButtonSalvarSair = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTableProdutos = new javax.swing.JTable();
+        jButtonExcluirItem = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTablePedido = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -169,30 +224,36 @@ public class incluirPedido extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(0, 0, 0));
         jLabel2.setText("Codido Cliente");
 
-        jLabel3.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel3.setText("Data de Pedido");
+        jTextFieldCod_cliente.setBackground(new java.awt.Color(204, 204, 204));
 
-        jTextField1.setBackground(new java.awt.Color(204, 204, 204));
+        jButtonBuscarProduto.setBackground(new java.awt.Color(51, 153, 255));
+        jButtonBuscarProduto.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonBuscarProduto.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonBuscarProduto.setText("Buscar produto");
 
-        jTextField2.setBackground(new java.awt.Color(204, 204, 204));
-        jTextField2.setText("jTextField2");
+        jLabel4.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel4.setText("Produtos atuais");
 
-        jButton2.setBackground(new java.awt.Color(51, 153, 255));
-        jButton2.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Buscar produto");
+        jButtonSelecionarItem.setBackground(new java.awt.Color(102, 153, 255));
+        jButtonSelecionarItem.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonSelecionarItem.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonSelecionarItem.setText("SELECIONAR ITEM");
+        jButtonSelecionarItem.addActionListener(this::jButtonSelecionarItemActionPerformed);
 
-        jButton3.setBackground(new java.awt.Color(51, 153, 255));
-        jButton3.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Calcular  valor total");
-        jButton3.setToolTipText("");
+        jButtonSair.setBackground(new java.awt.Color(255, 51, 51));
+        jButtonSair.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonSair.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonSair.setText("Retornar sem salvar");
+        jButtonSair.addActionListener(this::jButtonSairActionPerformed);
 
-        jTable1.setAutoCreateRowSorter(true);
-        jTable1.setBackground(new java.awt.Color(204, 204, 204));
-        jTable1.setForeground(new java.awt.Color(0, 0, 0));
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jButtonSalvarSair.setBackground(new java.awt.Color(0, 204, 51));
+        jButtonSalvarSair.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonSalvarSair.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonSalvarSair.setText("Salvar e Sair");
+
+        jTableProdutos.setBackground(new java.awt.Color(204, 204, 204));
+        jTableProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -200,96 +261,82 @@ public class incluirPedido extends javax.swing.JFrame {
                 {null, null, null, null}
             },
             new String [] {
-                "Nome", "Codigo", "Preco", "Quantidade"
+                "Codigo Produto", "Quantidade", "Preco unidade", "Valor Total"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, true
+                false, true, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setGridColor(new java.awt.Color(204, 204, 204));
-        jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jTable1.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane2.setViewportView(jTableProdutos);
 
-        jLabel4.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel4.setText("Produtos atuais");
+        jButtonExcluirItem.setBackground(new java.awt.Color(102, 153, 255));
+        jButtonExcluirItem.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
+        jButtonExcluirItem.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonExcluirItem.setText("EXCLUIR ITEM");
+        jButtonExcluirItem.addActionListener(this::jButtonExcluirItemActionPerformed);
 
-        jButton4.setBackground(new java.awt.Color(102, 153, 255));
-        jButton4.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Editar");
-        jButton4.addActionListener(this::jButton4ActionPerformed);
+        jTablePedido.setBackground(new java.awt.Color(204, 204, 204));
+        jTablePedido.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "Data Pedido", "Data Entrega", "Valor Total"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, true, false
+            };
 
-        jLabel5.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        jLabel5.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel5.setText("Entrega em até ");
-
-        jLabel6.setFont(new java.awt.Font("Liberation Sans", 0, 18)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel6.setText("Valor Total =");
-
-        jButton1.setBackground(new java.awt.Color(255, 51, 51));
-        jButton1.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Retornar sem salvar");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
-
-        jButton5.setBackground(new java.awt.Color(0, 204, 51));
-        jButton5.setFont(new java.awt.Font("Liberation Sans", 1, 18)); // NOI18N
-        jButton5.setForeground(new java.awt.Color(255, 255, 255));
-        jButton5.setText("Confirmar");
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(jTablePedido);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(126, 126, 126)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jTextField2))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel2)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel6))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(15, 15, 15))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jButton4)
-                        .addGap(174, 174, 174))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(224, 224, 224)
-                .addComponent(jButton5)
-                .addGap(136, 136, 136)
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(222, 222, 222)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(144, 144, 144))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jButtonBuscarProduto, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextFieldCod_cliente, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(106, 106, 106)
+                        .addComponent(jButtonSalvarSair)
+                        .addGap(146, 146, 146)
+                        .addComponent(jButtonSair))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 740, Short.MAX_VALUE))
+                        .addGap(39, 39, 39)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonSelecionarItem)
+                            .addComponent(jButtonExcluirItem))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -299,31 +346,27 @@ public class incluirPedido extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldCod_cliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(31, 31, 31)
+                .addComponent(jButtonBuscarProduto)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(jButtonSelecionarItem)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(27, 27, 27)
-                        .addComponent(jButton3))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButtonExcluirItem)))
+                .addGap(60, 60, 60)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5)
-                    .addComponent(jButton1))
-                .addGap(53, 53, 53))
+                    .addComponent(jButtonSalvarSair)
+                    .addComponent(jButtonSair))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -340,13 +383,17 @@ public class incluirPedido extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void jButtonSelecionarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSelecionarItemActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_jButtonSelecionarItemActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jButtonSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSairActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButtonSairActionPerformed
+
+    private void jButtonExcluirItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExcluirItemActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonExcluirItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -374,21 +421,19 @@ public class incluirPedido extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButtonBuscarProduto;
+    private javax.swing.JButton jButtonExcluirItem;
+    private javax.swing.JButton jButtonSair;
+    private javax.swing.JButton jButtonSalvarSair;
+    private javax.swing.JButton jButtonSelecionarItem;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTablePedido;
+    private javax.swing.JTable jTableProdutos;
+    private javax.swing.JTextField jTextFieldCod_cliente;
     // End of variables declaration//GEN-END:variables
 }
