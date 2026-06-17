@@ -8,7 +8,7 @@ import model.Produto;
 import repository.ProdutoRepository;
 import java.util.List;
 
-public class ProdutoController {
+public class Produto {
 
     private ProdutoRepository repository = new ProdutoRepository();
 
