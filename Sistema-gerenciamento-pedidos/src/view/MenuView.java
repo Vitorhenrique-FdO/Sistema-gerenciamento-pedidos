@@ -1,4 +1,7 @@
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
 package view;
 
 /**
@@ -109,10 +112,6 @@ public class MenuView extends javax.swing.JFrame {
 
     private void btnPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidosActionPerformed
         // TODO add your handling code here:
-        
-        view.PedidoPrincipalView telaPedido = new view.PedidoPrincipalView();
-        telaPedido.setVisible(true);
-        
     }//GEN-LAST:event_btnPedidosActionPerformed
 
     private void btnClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesActionPerformed
@@ -129,9 +128,6 @@ public class MenuView extends javax.swing.JFrame {
 
     private void btnProdutosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProdutosActionPerformed
         // TODO add your handling code here:
-        
-        view.ProdutoMenu telaProduto = new view.ProdutoMenu();
-        telaProduto.setVisible(true);
     }//GEN-LAST:event_btnProdutosActionPerformed
 
     /**
