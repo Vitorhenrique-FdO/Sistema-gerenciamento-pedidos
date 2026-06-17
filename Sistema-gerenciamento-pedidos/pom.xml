@@ -17,7 +17,7 @@
     <artifactId>exec-maven-plugin</artifactId>
     <version>3.5.1</version>
     <configuration>
-        <mainClass>br.com.seu_pacote.PedidoPrincipalView</mainClass>
+        <mainClass>com.mycompany.sistema.gerenciamento.pedidos.SistemaGerenciamentoPedidos</mainClass>
     </configuration>
     </plugin>
 </project>

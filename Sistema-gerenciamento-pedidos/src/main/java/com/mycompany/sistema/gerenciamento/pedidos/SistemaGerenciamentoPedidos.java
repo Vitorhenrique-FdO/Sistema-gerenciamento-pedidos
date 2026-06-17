@@ -4,6 +4,7 @@
 
 package com.mycompany.sistema.gerenciamento.pedidos;
 
+import view.MenuView;
 /**
  *
  * @author Paulo
@@ -11,6 +12,9 @@ package com.mycompany.sistema.gerenciamento.pedidos;
 public class SistemaGerenciamentoPedidos {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        java.awt.EventQueue.invokeLater(() -> {
+            // Isso abre o seu MENU direto
+            new MenuView().setVisible(true);
+        });
     }
 }
